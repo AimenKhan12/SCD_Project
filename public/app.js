@@ -1,0 +1,46 @@
+// Icons (simple line icons). Use: ic('home', 20)
+const ICONS = {
+  home: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
+  plus: '<circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>',
+  key: '<circle cx="8" cy="15" r="5"/><path d="M12 11l9-9M18 5l3 3M15 8l2 2"/>',
+  out: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+  tool: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  zap: '<path d="M13 2L3 14h9l-1 8 10-12h-9z"/>',
+  drop: '<path d="M12 2.7l5.7 5.7a8 8 0 1 1-11.4 0z"/>',
+  wifi: '<path d="M5 12.5a11 11 0 0 1 14 0M1.4 9a16 16 0 0 1 21.2 0M8.5 16.1a6 6 0 0 1 7 0M12 20h.01"/>',
+  trash: '<path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'
+};
+
+const ic = (name, size = 18) =>
+  `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+
+// HostelCare logo
+const LOGO = `<div class="logo"><svg viewBox="0 0 40 40" width="42" height="42"><defs><linearGradient id="lgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f9b8e"/><stop offset="1" stop-color="#0a4a5a"/></linearGradient></defs><rect width="40" height="40" rx="10" fill="url(#lgg)"/><path d="M9 19.5 20 10l11 9.5V31H9z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/><path d="m15.5 22 3.6 3.6 6-6.6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>HostelCare</b><small>Complaint Management</small></div></div>`;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const getUser = () => JSON.parse(localStorage.getItem('user') || 'null');
+const saveSession = d => { localStorage.setItem('token', d.token); localStorage.setItem('user', JSON.stringify(d.user)); };
+const logout = () => { localStorage.clear(); location.href = '/'; };
+
+// Server se baat karne ke liye. Example: api('/login', 'POST', { ... })
+async function api(path, method = 'GET', body) {
+  const res = await fetch('/api' + path, {
+    method,
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (localStorage.getItem('token') || '') },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Something went wrong');
+  return data;
+}
+// Neeche chhota message dikhane ke liye
+function toast(msg) {
+  const d = document.createElement('div');
+  d.className = 'tt';
+  d.textContent = msg;
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 2600);
+}
