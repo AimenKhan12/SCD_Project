@@ -152,3 +152,7 @@ td select{width:auto;padding:4px 8px}
 }
 
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Sidebar ke upar wale logo par hover */
+.side .logo{cursor:pointer;padding:6px;border-radius:12px;transition:background .2s,transform .2s}
+.side .logo:hover{background:rgba(255,255,255,.1);transform:translateX(4px)}
