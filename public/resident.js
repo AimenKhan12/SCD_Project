@@ -87,8 +87,9 @@ function page() {
         <h3>Latest complaints</h3>${table(a.slice(0, 5))}`;
     }
     case 'New Complaint':
+      // Heading left par hai, form box beech mein (margin: 0 auto)
       return `<h2>New complaint</h2><p class="sub">It goes to the staff member with the least open work in that category.</p>
-        <div class="pn fm">
+        <div class="pn fm" style="margin:0 auto 14px">
           <label>Category</label><select id="nc">${options(CATEGORIES)}</select>
           <label>Priority</label><select id="np"><option>Normal</option><option>Urgent</option><option>Low</option></select>
           <label>Best time for a visit to your room</label><select id="nt">${options(['Anytime', 'Morning', 'Afternoon', 'Evening', 'After 5 PM'])}</select>
