@@ -214,7 +214,8 @@ app.post('/api/password', auth, async (req, res) => {
   }
 });
 init().then(() => {
+  console.log('Database Connected Successfully! (Neon PostgreSQL)');
   const port = process.env.PORT || 3000;
-  app.listen(port, () => console.log('Server chal raha hai: http://localhost:' + port));
+  app.listen(port, () => console.log('Server Working: http://localhost:' + port));
 }).catch(e => console.log('Database error:', e.message));
 
