@@ -18,7 +18,7 @@ async function doSignup() {
       password: $('#sp').value
     });
     saveSession(data);
-    location.href = '/dashboard.html';
+    location.href = home(data.user);
   } catch (e) {
     $('#er').textContent = e.message;
   }

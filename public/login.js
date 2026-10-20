@@ -1,6 +1,5 @@
 // Agar pehle se login hai to dashboard par bhej do
-if (localStorage.getItem('token')) location.href = '/dashboard.html';
-
+if (localStorage.getItem('token')) location.href = home(getUser());
 let role = 'resident';
 const ROLE_ICON = { resident: 'home', staff: 'tool', admin: 'shield' };
 

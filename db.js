@@ -6,7 +6,6 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// users table banata hai agar pehle se nahi hai
 async function init() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -20,23 +19,40 @@ async function init() {
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);
-  async function init() {
+  await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login TIMESTAMP');
+
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS complaints (
       id SERIAL PRIMARY KEY,
-      name TEXT NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      password_hash TEXT NOT NULL,
-      role TEXT NOT NULL,
-      room TEXT,
-      category TEXT,
+      resident_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      assigned_to INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      category TEXT NOT NULL,
+      priority TEXT NOT NULL DEFAULT 'Normal',
+      visit_time TEXT,
+      description TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'Pending',
+      rating INTEGER,
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);
 
-  // last_login column agar nahi hai to bana do
-  await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login TIMESTAMP');
-}
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS notices (
+      id SERIAL PRIMARY KEY,
+      text TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS notifications (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      text TEXT NOT NULL,
+      is_read BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
 }
 
 module.exports = { pool, init };

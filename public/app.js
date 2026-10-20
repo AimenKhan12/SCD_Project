@@ -10,8 +10,22 @@ const ICONS = {
   zap: '<path d="M13 2L3 14h9l-1 8 10-12h-9z"/>',
   drop: '<path d="M12 2.7l5.7 5.7a8 8 0 1 1-11.4 0z"/>',
   wifi: '<path d="M5 12.5a11 11 0 0 1 14 0M1.4 9a16 16 0 0 1 21.2 0M8.5 16.1a6 6 0 0 1 7 0M12 20h.01"/>',
-  trash: '<path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'
+  trash: '<path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+    trash: '<path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  grid: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
+  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+  check: '<path d="M22 11v1a10 10 0 1 1-6-9.1"/><path d="M22 4L12 14l-3-3"/>',
+  mega: '<path d="M11 5L6 9H2v6h4l5 4z"/><path d="M19 5a10 10 0 0 1 0 14M15.5 8.5a5 5 0 0 1 0 7"/>',
+  menu: '<path d="M3 6h18M3 12h18M3 18h18"/>'
+
 };
+const CATEGORIES = ['Electrical', 'Plumbing', 'Cleaning', 'Internet'];
+const STATUSES = ['Pending', 'In Progress', 'Resolved'];
+
+// Role ke hisaab se kaunsa page kholna hai
+const home = u => (u && u.role === 'resident') ? '/resident.html' : '/dashboard.html';
 
 const ic = (name, size = 18) =>
   `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
@@ -33,6 +47,7 @@ async function api(path, method = 'GET', body) {
     body: body ? JSON.stringify(body) : undefined
   });
   const data = await res.json().catch(() => ({}));
+    if (res.status === 401 && localStorage.getItem('token')) logout();
   if (!res.ok) throw new Error(data.error || 'Something went wrong');
   return data;
 }
