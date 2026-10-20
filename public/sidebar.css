@@ -1,0 +1,67 @@
+/* sidebar.css: resident portal layout, sidebar, cards, charts, badges, notices */
+
+/* Poora portal screen par fixed, isliye sidebar hamesha pure screen jitni lambi */
+.app{position:fixed;top:0;right:0;bottom:0;left:0;display:flex;overflow:hidden}
+.side{width:236px;height:100%;background:linear-gradient(180deg,var(--side),#0d4350);color:var(--stx);padding:18px 12px;display:flex;flex-direction:column;gap:4px;flex-shrink:0;overflow-y:auto}
+.side .logo{margin:2px 6px 18px}
+.side .logo b{color:#fff}
+.side .logo small{color:var(--stx)}
+.side a{padding:10px 12px;border-radius:10px;cursor:pointer;display:flex;gap:10px;align-items:center;flex-shrink:0;transition:background .2s,transform .2s,color .2s}
+.side a i{font-style:normal;display:grid;place-items:center;transition:transform .2s}
+.side a:hover{background:rgba(255,255,255,.1);transform:translateX(4px);color:#fff}
+.side a:hover i{transform:scale(1.25) rotate(-8deg)}
+.side a.on{background:linear-gradient(135deg,#14b8a6,#0b7f8f);color:#fff;font-weight:600}
+
+/* Sidebar ke logo par hover */
+.side .logo{cursor:pointer;padding:6px;border-radius:12px;transition:background .2s,transform .2s}
+.side .logo:hover{background:rgba(255,255,255,.1);transform:translateX(4px)}
+
+/* Right side main area */
+.main{flex:1;min-width:0;min-height:0;height:100%;display:flex;flex-direction:column}
+.app .cont{max-width:none;margin:0;width:100%;flex:1;min-height:0;overflow-y:auto}
+
+/* Dashboard: hero, cards */
+.hero{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px;margin-bottom:14px}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;border-top:4px solid var(--k);transition:transform .2s,box-shadow .2s}
+.c:hover{transform:translateY(-4px);box-shadow:var(--sh)}
+.c em{font-style:normal;float:right;color:var(--k)}
+.c b{font-size:28px;display:block}
+.c span{color:var(--mut);font-size:13px}
+.k0{--k:#0b7f8f}.k1{--k:#f5a524}.k2{--k:#3b6bff}.k3{--k:#1faa59}
+
+/* Charts */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:14px}
+.g2 .pn{margin:0}
+.dnw{display:flex;align-items:center;gap:18px}
+.dn{width:118px;height:118px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.dn div{width:82px;height:82px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-weight:700;font-size:20px}
+.lgd div{font-size:13px;margin:3px 0}
+.lgd i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.bar{height:12px;background:linear-gradient(90deg,#0b7f8f,#14b8a6);border-radius:6px;transform-origin:left;animation:grow .8s ease both}
+.row{display:flex;align-items:center;gap:10px;margin:9px 0}
+.row span:first-child{width:84px;font-size:14px}
+
+/* Status badges */
+.bd{padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.Pending{background:var(--warnbg);color:var(--warn)}
+.In-Progress{background:var(--infobg);color:var(--info)}
+.Resolved{background:var(--okbg);color:var(--ok)}
+.Urgent{color:var(--bad);font-weight:700}
+.st{color:var(--acc);letter-spacing:2px;white-space:nowrap}
+
+/* Notices / notifications */
+.nt{padding:10px 0;border-bottom:1px solid var(--bd)}
+.nt.u{font-weight:600}
+.nt:last-child{border:0}
+.nt svg{vertical-align:-3px;color:var(--pri)}
+
+/* Mobile */
+@media(max-width:720px){
+  .side{position:fixed;z-index:5;top:0;bottom:0;left:0;transform:translateX(-100%);transition:transform .25s}
+  .side.open{transform:none}
+  .ham{display:block}
+  .who{display:none}
+  .top{padding:10px 14px}
+  .cont{padding:14px}
+}
