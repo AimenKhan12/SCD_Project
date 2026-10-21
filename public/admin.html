@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="icon" href="/favicon.svg">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/sidebar.css">
+  <title>HostelCare - Admin</title>
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ===== ADMIN SIDEBAR ===== -->
+    <aside class="side" id="sd">
+
+      <!-- Logo yahan aayega (admin-sidebar.js se) -->
+      <div id="logo-box"></div>
+
+      <!-- Menu. Naya item chahiye to bas ek <a> line copy karke add kar do -->
+      <a class="on" data-page="Dashboard"><i data-ic="grid"></i>Dashboard</a>
+      <a data-page="All Complaints"><i data-ic="folder"></i>All Complaints</a>
+      <a data-page="Manage Staff"><i data-ic="users"></i>Manage Staff</a>
+      <a data-page="Reports"><i data-ic="chart"></i>Reports</a>
+      <a data-page="Notice Board"><i data-ic="mega"></i>Notice Board</a>
+      <a data-page="Notifications"><i data-ic="bell"></i>Notifications</a>
+      <a data-page="Change Password"><i data-ic="key"></i>Change Password</a>
+
+      <!-- Sidebar ke neeche admin ka naam -->
+      <div class="side-foot">
+        <b id="side-name">Admin</b>
+        <small>Administrator</small>
+      </div>
+
+    </aside>
+
+    <!-- ===== BEECH WALA HISSA (Step 4 mein banega) ===== -->
+    <div class="main" id="main"></div>
+
+  </div>
+
+</body>
+</html>
