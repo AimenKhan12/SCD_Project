@@ -83,14 +83,14 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// ---------- Staff list (admin) ----------
 app.get('/api/staff', auth, adminOnly, async (req, res) => {
   const result = await pool.query(
-    "SELECT id, name, email, category, created_at FROM users WHERE role = 'staff' ORDER BY id DESC"
+    `SELECT u.id, u.name, u.email, u.category, u.created_at,
+       (SELECT COUNT(*) FROM complaints c WHERE c.assigned_to = u.id AND c.status <> 'Resolved')::int AS open_count
+     FROM users u WHERE u.role = 'staff' ORDER BY u.id DESC`
   );
   res.json(result.rows);
 });
-
 // ---------- Staff account banana (admin) ----------
 app.post('/api/staff', auth, adminOnly, async (req, res) => {
   try {
@@ -212,6 +212,33 @@ app.post('/api/password', auth, async (req, res) => {
     console.log(e);
     res.status(500).json({ error: 'Server error' });
   }
+});
+// ---------- Admin: complaint ka staff badalna ----------
+app.patch('/api/complaints/:id/assign', auth, adminOnly, async (req, res) => {
+  const staffId = parseInt(req.body.staff_id);
+  if (!staffId) return res.status(400).json({ error: 'Choose a staff member' });
+  await pool.query('UPDATE complaints SET assigned_to = $1 WHERE id = $2', [staffId, req.params.id]);
+  await pool.query('INSERT INTO notifications (user_id, text) VALUES ($1, $2)',
+    [staffId, `Complaint #${req.params.id} was assigned to you.`]);
+  res.json({ ok: true });
+});
+
+// ---------- Admin: complaint ka status badalna ----------
+app.patch('/api/complaints/:id/status', auth, adminOnly, async (req, res) => {
+  const { status } = req.body;
+  if (!['Pending', 'In Progress', 'Resolved'].includes(status)) return res.status(400).json({ error: 'Wrong status' });
+  const r = await pool.query('UPDATE complaints SET status = $1 WHERE id = $2 RETURNING resident_id', [status, req.params.id]);
+  if (r.rows[0]) await pool.query('INSERT INTO notifications (user_id, text) VALUES ($1, $2)',
+    [r.rows[0].resident_id, `Your complaint #${req.params.id} is now ${status}.`]);
+  res.json({ ok: true });
+});
+
+// ---------- Admin: notice post karna ----------
+app.post('/api/notices', auth, adminOnly, async (req, res) => {
+  const text = (req.body.text || '').trim();
+  if (!text) return res.status(400).json({ error: 'Write the notice first' });
+  await pool.query('INSERT INTO notices (text) VALUES ($1)', [text]);
+  res.json({ ok: true });
 });
 init().then(() => {
   console.log('Database Connected Successfully! (Neon PostgreSQL)');
