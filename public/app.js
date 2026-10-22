@@ -25,7 +25,7 @@ const CATEGORIES = ['Electrical', 'Plumbing', 'Cleaning', 'Internet'];
 const STATUSES = ['Pending', 'In Progress', 'Resolved'];
 
 // Role ke hisaab se kaunsa page kholna hai
-const home = u => (u && u.role === 'resident') ? '/resident.html' : '/dashboard.html';
+const home = u => !u ? '/' : u.role === 'resident' ? '/resident.html' : u.role === 'admin' ? '/admin.html' : '/dashboard.html';
 
 const ic = (name, size = 18) =>
   `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;

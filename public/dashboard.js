@@ -1,6 +1,7 @@
 const me = getUser();
 if (!me || !localStorage.getItem('token')) location.href = '/';
 if (me.role === 'resident') location.href = '/resident.html';
+if (me.role === 'admin') location.href = '/admin.html';
 
 const CAT_ICON = { Electrical: 'zap', Plumbing: 'drop', Cleaning: 'trash', Internet: 'wifi' };
 
