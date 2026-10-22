@@ -1,0 +1,4 @@
+/* admin-main.css: admin ke beech wale hisse ka extra CSS */
+.fl{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.fl select{width:auto}
+.fm.mid{margin:0 auto 14px}
