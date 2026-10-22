@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/sidebar.css">
   <link rel="stylesheet" href="/admin-sidebar.css">
-  <script src="/admin-pages.js"></script>
+  <link rel="stylesheet" href="/admin-main.css">
   <title>HostelCare - Admin</title>
 </head>
 <body>
@@ -17,10 +17,10 @@
     <!-- ===== ADMIN SIDEBAR ===== -->
     <aside class="side" id="sd">
 
-      <!-- Logo yahan aayega (admin-sidebar.js se) -->
+      <!-- Logo (admin-sidebar.js lagata hai) -->
       <div id="logo-box"></div>
 
-      <!-- Menu. Naya item chahiye to bas ek <a> line copy karke add kar do -->
+      <!-- Menu. Naya item chahiye to ek <a> line copy karke add kar do -->
       <a class="on" data-page="Dashboard"><i data-ic="grid"></i>Dashboard</a>
       <a data-page="All Complaints"><i data-ic="folder"></i>All Complaints</a>
       <a data-page="Manage Staff"><i data-ic="users"></i>Manage Staff</a>
@@ -37,10 +37,31 @@
 
     </aside>
 
-    <!-- ===== BEECH WALA HISSA (Step 4 mein banega) ===== -->
-    <div class="main" id="main"></div>
+    <!-- ===== BEECH WALA HISSA ===== -->
+    <div class="main" id="main">
+
+      <!-- Top bar -->
+      <div class="top">
+        <button class="ham" onclick="document.getElementById('sd').classList.toggle('open')">&#9776;</button>
+        <b>Admin portal</b>
+        <span class="sp"></span>
+        <span class="bell" id="bell" onclick="showPage('Notifications')"></span>
+        <div class="av" id="av"></div>
+        <div class="who nm"><span id="top-name"></span><small>Admin</small></div>
+        <button class="btn sm o" onclick="logout()">Log out</button>
+      </div>
+
+      <!-- Yahan har page ka content aata hai -->
+      <div class="cont" id="content"></div>
+
+    </div>
 
   </div>
+
+  <!-- Scripts. Order na badalna -->
+  <script src="/app.js"></script>
+  <script src="/admin-sidebar.js"></script>
+  <script src="/admin-pages.js"></script>
 
 </body>
 </html>
