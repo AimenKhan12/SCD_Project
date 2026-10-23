@@ -2,7 +2,11 @@
 .fl{display:flex;gap:10px;align-items:center;margin-bottom:12px}
 .fl select{width:auto}
 .fm.mid{margin:0 auto 14px}
+
 /* Filter dropdown par hover aur focus */
 .fl select{cursor:pointer;transition:border-color .2s,box-shadow .2s}
 .fl select:hover{border-color:var(--pri)}
 .fl span{color:var(--mut);font-weight:600}
+/* Centered form box par halka hover */
+.fm.mid{transition:box-shadow .2s,transform .2s}
+.fm.mid:hover{box-shadow:var(--sh);transform:translateY(-2px)}
