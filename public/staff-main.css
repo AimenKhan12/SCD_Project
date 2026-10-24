@@ -1,0 +1,3 @@
+/* staff-main.css: staff ke beech wale hisse ka extra CSS */
+.fm.mid{margin:0 auto 14px;transition:box-shadow .2s,transform .2s}
+.fm.mid:hover{box-shadow:var(--sh);transform:translateY(-2px)}
