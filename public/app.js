@@ -3,7 +3,7 @@ const CATEGORIES = ['Electrical', 'Plumbing', 'Cleaning', 'Internet'];
 const STATUSES = ['Pending', 'In Progress', 'Resolved'];
 
 // Role ke hisaab se kaunsa page kholna hai
-const home = u => !u ? '/' : u.role === 'resident' ? '/resident.html' : u.role === 'admin' ? '/admin.html' : '/dashboard.html';
+const home = u => !u ? '/' : u.role === 'resident' ? '/resident.html' : u.role === 'admin' ? '/admin.html' : '/staff.html';
 
 // Icons. Use: ic('bell', 20)
 const ICONS = {
