@@ -61,7 +61,10 @@ function content() {
         </div></div>
         <h3>Latest complaints</h3>${table(a.slice(0, 5), false)}`;
     }
-
+    // ===== My Complaints (jo abhi baaki hain, status yahin se badlo) =====
+    case 'My Complaints':
+      return `<h2>My complaints</h2><p class="sub">Complaints assigned to you. Change the status from the table.</p>
+        ${table(a.filter(c => c.status !== 'Resolved'), true)}`;
     // ADD NEW PAGES ABOVE THIS LINE
 
     default:
