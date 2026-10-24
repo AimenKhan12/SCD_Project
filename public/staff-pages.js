@@ -76,7 +76,13 @@ function content() {
         <div class="pn">${data.notices.length
           ? data.notices.map(n => `<div class="nt">${ic('mega', 16)} ${esc(n.text)}<br><small>${day(n.created_at)}</small></div>`).join('')
           : '<p class="empty">No notices yet.</p>'}</div>`;
-        // ADD NEW PAGES ABOVE THIS LINE
+           // ===== Notifications =====
+    case 'Notifications':
+      return `<h2>Notifications</h2><p class="sub">New complaints and updates.</p>
+        <div class="pn">${data.notes.items.length
+          ? data.notes.items.map(n => `<div class="nt ${n.is_read ? '' : 'u'}">${ic('bell', 16)} ${esc(n.text)}<br><small>${new Date(n.created_at).toLocaleString()}</small></div>`).join('')
+          : '<p class="empty">No notifications yet.</p>'}</div>`;
+          // ADD NEW PAGES ABOVE THIS LINE
 
     default:
       return '<h2>Coming soon</h2><p class="sub">This page is not ready yet.</p>';
