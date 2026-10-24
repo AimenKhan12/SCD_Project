@@ -1,5 +1,8 @@
-// Agar pehle se login hai to dashboard par bhej do
+// login.js: login page ka logic
+
+// Agar pehle se login hai to apne panel par bhej do (role ke hisaab se)
 if (localStorage.getItem('token')) location.href = home(getUser());
+
 let role = 'resident';
 const ROLE_ICON = { resident: 'home', staff: 'tool', admin: 'shield' };
 
@@ -13,9 +16,7 @@ function draw() {
     <button class="btn full" onclick="doLogin()">${ic('key', 16)} Log in</button>
     ${role === 'resident'
       ? '<div class="lnk" onclick="location.href=\'/signup.html\'">New resident? Create an account</div>'
-      : role === 'staff'
-      ? '<div class="hint">Staff accounts are created by the admin.</div>'
-      : '<div class="hint">Admin portal access only.</div>'}
+      : '<div class="hint">Staff accounts are created by the admin.</div>'}
   </div></div>`;
 }
 
@@ -31,7 +32,7 @@ async function doLogin() {
   try {
     const data = await api('/login', 'POST', { email: $('#em').value, password: $('#pw').value, role });
     saveSession(data);
-    location.href = '/dashboard.html';
+    location.href = home(data.user);   // resident, admin ya staff ka sahi page
   } catch (e) {
     $('#er').textContent = e.message;
   }

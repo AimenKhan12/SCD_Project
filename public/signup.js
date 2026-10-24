@@ -1,4 +1,4 @@
-// Sign up page (sirf residents ke liye)
+// signup.js: resident signup page ka logic
 $('#root').innerHTML = `<div class="lg"><div class="box">${LOGO}
   <p class="sub">Create a resident account. Staff accounts are made by the admin.</p>
   <label>Full name</label><input id="sn" autocomplete="name">
@@ -18,7 +18,7 @@ async function doSignup() {
       password: $('#sp').value
     });
     saveSession(data);
-    location.href = home(data.user);
+    location.href = '/resident.html';   // signup sirf residents ke liye hai
   } catch (e) {
     $('#er').textContent = e.message;
   }

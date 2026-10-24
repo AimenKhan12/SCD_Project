@@ -1,7 +1,7 @@
 // Resident portal. Sidebar ka har item ek page hai.
 const me = getUser();
 if (!me || !localStorage.getItem('token')) location.href = '/';
-if (me.role !== 'resident') location.href = '/dashboard.html';
+if (me.role !== 'resident') location.href = '/resident.html';
 
 const MENU = ['Dashboard', 'New Complaint', 'My Complaints', 'History', 'Notice Board', 'Notifications', 'Change Password'];
 const ICON = { 'Dashboard': 'grid', 'New Complaint': 'plus', 'My Complaints': 'file', 'History': 'clock', 'Notice Board': 'mega', 'Notifications': 'bell', 'Change Password': 'key' };
