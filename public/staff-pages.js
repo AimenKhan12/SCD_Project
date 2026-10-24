@@ -70,6 +70,12 @@ function content() {
     case 'Completed Work':
       return `<h2>Completed work</h2><p class="sub">Complaints you have resolved.</p>
         ${table(a.filter(c => c.status === 'Resolved'), false)}`;
+           // ===== Notice Board (sirf padhne ke liye) =====
+    case 'Notice Board':
+      return `<h2>Notice board</h2><p class="sub">Announcements from the hostel admin.</p>
+        <div class="pn">${data.notices.length
+          ? data.notices.map(n => `<div class="nt">${ic('mega', 16)} ${esc(n.text)}<br><small>${day(n.created_at)}</small></div>`).join('')
+          : '<p class="empty">No notices yet.</p>'}</div>`;
         // ADD NEW PAGES ABOVE THIS LINE
 
     default:
