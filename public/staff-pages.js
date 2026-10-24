@@ -114,7 +114,7 @@ async function act(fn, okMessage) {
   try { await fn(); if (okMessage) toast(okMessage); } catch (e) { toast(e.message); }
   render();
 }
-
+const changePassword = () => act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value }), 'Password changed');
 // ---------- forms ----------
 // ADD NEW FUNCTIONS ABOVE THIS LINE
 
