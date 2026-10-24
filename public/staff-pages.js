@@ -65,7 +65,12 @@ function content() {
     case 'My Complaints':
       return `<h2>My complaints</h2><p class="sub">Complaints assigned to you. Change the status from the table.</p>
         ${table(a.filter(c => c.status !== 'Resolved'), true)}`;
-    // ADD NEW PAGES ABOVE THIS LINE
+    
+        // ===== Completed Work (resolved complaints) =====
+    case 'Completed Work':
+      return `<h2>Completed work</h2><p class="sub">Complaints you have resolved.</p>
+        ${table(a.filter(c => c.status === 'Resolved'), false)}`;
+        // ADD NEW PAGES ABOVE THIS LINE
 
     default:
       return '<h2>Coming soon</h2><p class="sub">This page is not ready yet.</p>';
