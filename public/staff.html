@@ -36,8 +36,23 @@
 
     </aside>
 
-    
-    <div class="main" id="main"></div>
+   <div class="main" id="main">
+
+      <!-- Top bar -->
+      <div class="top">
+        <button class="ham" title="Menu" onclick="document.getElementById('sd').classList.toggle('open')">&#9776;</button>
+        <b>Staff Portal</b>
+        <span class="sp"></span>
+        <span class="bell" id="bell" title="Notifications" onclick="showPage('Notifications')"></span>
+        <div class="av" id="av" title="Staff profile"></div>
+        <div class="who nm"><span id="top-name"></span><small>Staff</small></div>
+        <button class="btn sm o" title="Log out" onclick="logout()">Log out</button>
+      </div>
+
+      <!-- Yahan har page ka content aata hai -->
+      <div class="cont" id="content"></div>
+
+    </div>
 
   </div>
   <script src="/app.js"></script>
