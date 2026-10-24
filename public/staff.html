@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="icon" href="/favicon.svg">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/sidebar.css">
+  <link rel="stylesheet" href="/staff-sidebar.css">
+  <link rel="stylesheet" href="/staff-main.css">
+  <title>HostelCare - Staff Portal</title>
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ===== STAFF SIDEBAR ===== -->
+    <aside class="side" id="sd">
+
+      <!-- Logo (staff-sidebar.js lagata hai) -->
+      <div id="logo-box"></div>
+
+      <!-- Menu. Naya item chahiye to ek <a> line copy karke add kar do -->
+      <a class="on" data-page="Dashboard"><i data-ic="grid"></i>Dashboard</a>
+      <a data-page="My Complaints"><i data-ic="file"></i>My Complaints</a>
+      <a data-page="Completed Work"><i data-ic="check"></i>Completed Work</a>
+      <a data-page="Notice Board"><i data-ic="mega"></i>Notice Board</a>
+      <a data-page="Notifications"><i data-ic="bell"></i>Notifications</a>
+      <a data-page="Change Password"><i data-ic="key"></i>Change Password</a>
+
+      <!-- Sidebar ke neeche staff ka naam aur category -->
+      <div class="side-foot">
+        <b id="side-name">Staff</b>
+        <small id="side-cat">Staff</small>
+      </div>
+
+    </aside>
+
+    <!-- ===== BEECH WALA HISSA (chunk 5 mein banega) ===== -->
+    <div class="main" id="main"></div>
+
+  </div>
+
+</body>
+</html>
