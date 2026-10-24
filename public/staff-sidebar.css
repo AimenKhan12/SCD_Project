@@ -2,3 +2,7 @@
 .side-foot{margin-top:auto;padding:12px;border-top:1px solid rgba(255,255,255,.15);color:#fff}
 .side-foot b{display:block}
 .side-foot small{color:var(--stx)}
+
+/*  hover */
+.side-foot{border-radius:10px;transition:background .2s}
+.side-foot:hover{background:rgba(255,255,255,.1)}
