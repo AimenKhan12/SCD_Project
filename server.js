@@ -223,16 +223,23 @@ app.patch('/api/complaints/:id/assign', auth, adminOnly, async (req, res) => {
   res.json({ ok: true });
 });
 
-// ---------- Admin: complaint ka status badalna ----------
-app.patch('/api/complaints/:id/status', auth, adminOnly, async (req, res) => {
+// ---------- Complaint ka status badalna (admin: koi bhi, staff: sirf apni) ----------
+app.patch('/api/complaints/:id/status', auth, async (req, res) => {
+  if (req.user.role === 'resident') return res.status(403).json({ error: 'Not allowed' });
   const { status } = req.body;
   if (!['Pending', 'In Progress', 'Resolved'].includes(status)) return res.status(400).json({ error: 'Wrong status' });
-  const r = await pool.query('UPDATE complaints SET status = $1 WHERE id = $2 RETURNING resident_id', [status, req.params.id]);
+
+  let r;
+  if (req.user.role === 'admin') {
+    r = await pool.query('UPDATE complaints SET status = $1 WHERE id = $2 RETURNING resident_id', [status, req.params.id]);
+  } else {
+    r = await pool.query('UPDATE complaints SET status = $1 WHERE id = $2 AND assigned_to = $3 RETURNING resident_id',
+      [status, req.params.id, req.user.id]);
+  }
   if (r.rows[0]) await pool.query('INSERT INTO notifications (user_id, text) VALUES ($1, $2)',
     [r.rows[0].resident_id, `Your complaint #${req.params.id} is now ${status}.`]);
   res.json({ ok: true });
 });
-
 // ---------- Admin: notice post karna ----------
 app.post('/api/notices', auth, adminOnly, async (req, res) => {
   const text = (req.body.text || '').trim();
