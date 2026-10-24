@@ -82,6 +82,12 @@ function content() {
         <div class="pn">${data.notes.items.length
           ? data.notes.items.map(n => `<div class="nt ${n.is_read ? '' : 'u'}">${ic('bell', 16)} ${esc(n.text)}<br><small>${new Date(n.created_at).toLocaleString()}</small></div>`).join('')
           : '<p class="empty">No notifications yet.</p>'}</div>`;
+            // ===== Change Password =====
+    case 'Change Password':
+      return `<h2>Change password</h2><p class="sub">Use a password that is easy for you to remember.</p>
+        <div class="pn fm mid"><label>Current password</label><input id="op" type="password">
+          <label>New password (at least 6 characters)</label><input id="np2" type="password">
+          <button class="btn full" onclick="changePassword()">${ic('key', 16)} Save password</button></div>`;
           // ADD NEW PAGES ABOVE THIS LINE
 
     default:
