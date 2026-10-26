@@ -4,12 +4,25 @@ $('#root').innerHTML = `<div class="lg"><div class="box">${LOGO}
   <label>Full name</label><input id="sn" autocomplete="name">
   <label>Room (block and number)</label><input id="sr" placeholder="Block B, Room 12">
   <label>Email</label><input id="se" type="email" autocomplete="username">
-  <label>Password (at least 6 characters)</label><input id="sp" type="password" autocomplete="new-password">
+  <label>Password (at least 6 characters)</label>
+  <div class="pw-wrap">
+    <input id="sp" type="password" autocomplete="new-password">
+    <button type="button" class="pw-eye" id="spbtn" title="Show password" onclick="togglePw()">${ic('eye', 18)}</button>
+  </div>
   <div class="err" id="er"></div>
   <button class="btn full" id="sbtn" onclick="doSignup()">${ic('plus', 16)} Create account</button>
   <div class="lnk" onclick="location.href='/'">Back to log in</div></div></div>`;
 
 let done = false;   // account ban gaya to dobara submit na ho
+
+// Eye icon par click: password dikhao ya chhupao, aur icon badlo
+function togglePw() {
+  const p = $('#sp');
+  const show = p.type === 'password';
+  p.type = show ? 'text' : 'password';
+  $('#spbtn').innerHTML = ic(show ? 'eyeoff' : 'eye', 18);   // dikh raha ho to slash wali eye
+  $('#spbtn').title = show ? 'Hide password' : 'Show password';
+}
 
 async function doSignup() {
   if (done) return;
