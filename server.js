@@ -114,7 +114,20 @@ app.post('/api/staff', auth, adminOnly, async (req, res) => {
 
 // ---------- Staff delete (admin) ----------
 app.delete('/api/staff/:id', auth, adminOnly, async (req, res) => {
-  await pool.query("DELETE FROM users WHERE id = $1 AND role = 'staff'", [req.params.id]);
+  const id = req.params.id;
+  const s = await pool.query("SELECT category FROM users WHERE id = $1 AND role = 'staff'", [id]);
+  if (!s.rows[0]) return res.json({ ok: true });
+
+  // Same category ka dusra staff jiske paas sabse kam open kaam hai
+  const other = await pool.query(
+    `SELECT u.id FROM users u
+     WHERE u.role = 'staff' AND u.category = $1 AND u.id <> $2
+     ORDER BY (SELECT COUNT(*) FROM complaints c WHERE c.assigned_to = u.id AND c.status <> 'Resolved'), u.id
+     LIMIT 1`, [s.rows[0].category, id]);
+  const newId = other.rows[0] ? other.rows[0].id : null;
+
+  await pool.query("UPDATE complaints SET assigned_to = $1 WHERE assigned_to = $2 AND status <> 'Resolved'", [newId, id]);
+  await pool.query("DELETE FROM users WHERE id = $1 AND role = 'staff'", [id]);
   res.json({ ok: true });
 });
 // ---------- Complaints ----------
