@@ -12,6 +12,7 @@ function draw() {
     <div class="roles">${['resident', 'staff', 'admin'].map(r => `<div class="role ${r === role ? 'on' : ''}" onclick="pick('${r}')"><b>${ic(ROLE_ICON[r], 30)}</b><span>${r[0].toUpperCase() + r.slice(1)}</span></div>`).join('')}</div>
     <label>Email</label><input id="em" type="email">
     <label>Password</label><input id="pw" type="password">
+    <button type="button" class="btn sm o" id="pwbtn" style="margin-top:8px" onclick="togglePw()">Show password</button>
     <div class="err" id="er"></div>
     <button class="btn full" onclick="doLogin()">${ic('key', 16)} Log in</button>
     ${role === 'resident'
@@ -26,6 +27,14 @@ function pick(r) {
   role = r;
   draw();
   $('#em').value = e;
+}
+
+// Password dikhao ya chhupao, aur button ka text badlo
+function togglePw() {
+  const p = $('#pw');
+  const show = p.type === 'password';
+  p.type = show ? 'text' : 'password';
+  $('#pwbtn').textContent = show ? 'Hide password' : 'Show password';
 }
 
 async function doLogin() {
