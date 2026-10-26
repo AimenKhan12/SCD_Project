@@ -93,4 +93,10 @@ td select{width:auto;padding:4px 8px}
 /* Message at bottom */
 .tt{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:10px;font-size:14px;z-index:9}
 
+/* ---------- Password eye icon (password box ke andar, right side) ---------- */
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:44px}
+.pw-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;cursor:pointer;color:var(--mut);display:grid;place-items:center;padding:6px;border-radius:8px;transition:color .2s,background .2s}
+.pw-eye:hover{color:var(--pri);background:var(--pri2)}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
