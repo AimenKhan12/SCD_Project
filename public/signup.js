@@ -1,6 +1,6 @@
 // signup.js: resident signup page ka logic
 $('#root').innerHTML = `<div class="lg"><div class="box">${LOGO}
-  <p class="sub">Create a resident account. Staff accounts are made by the admin.</p>
+  <p class="sub">Create a resident account.</p>
   <label>Full name</label><input id="sn" autocomplete="name">
   <label>Room (block and number)</label><input id="sr" placeholder="Block B, Room 12">
   <label>Email</label><input id="se" type="email" autocomplete="username">
