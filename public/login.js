@@ -20,7 +20,10 @@ function draw() {
     <button class="btn full" onclick="doLogin()">${ic('key', 16)} Log in</button>
     ${role === 'resident'
       ? '<div class="lnk" onclick="location.href=\'/signup.html\'">New resident? Create an account</div>'
-      : '<div class="hint">Staff accounts are created by the admin.</div>'}
+     : role === 'staff'
+      ? '<div class="hint">Staff accounts are created by the admin.</div>'
+      : '<div class="hint">Admin accounts are created by the system.</div>'}
+
   </div></div>`;
 }
 
