@@ -14,7 +14,7 @@ function draw() {
     <label>Password</label>
     <div class="pw-wrap">
       <input id="pw" type="password">
-      <button type="button" class="pw-eye" id="pwbtn" title="Show password" onclick="togglePw()">${ic('eye', 18)}</button>
+      <button type="button" class="pw-eye" id="pwbtn" title="Show password" onclick="togglePw()">${ic('eyeoff', 18)}</button>
     </div>
     <div class="err" id="er"></div>
     <button class="btn full" onclick="doLogin()">${ic('key', 16)} Log in</button>
@@ -37,7 +37,7 @@ function togglePw() {
   const p = $('#pw');
   const show = p.type === 'password';
   p.type = show ? 'text' : 'password';
-  $('#pwbtn').innerHTML = ic(show ? 'eyeoff' : 'eye', 18);   // dikh raha ho to slash wali eye
+$('#pwbtn').innerHTML = ic(show ? 'eye' : 'eyeoff', 18);  // dikh raha ho to slash wali eye
   $('#pwbtn').title = show ? 'Hide password' : 'Show password';
 }
 

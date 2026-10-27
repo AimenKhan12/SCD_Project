@@ -7,7 +7,7 @@ $('#root').innerHTML = `<div class="lg"><div class="box">${LOGO}
   <label>Password (at least 6 characters)</label>
   <div class="pw-wrap">
     <input id="sp" type="password" autocomplete="new-password">
-    <button type="button" class="pw-eye" id="spbtn" title="Show password" onclick="togglePw()">${ic('eye', 18)}</button>
+    <button type="button" class="pw-eye" id="spbtn" title="Show password" onclick="togglePw()">${ic('eyeoff', 18)}</button>
   </div>
   <div class="err" id="er"></div>
   <button class="btn full" id="sbtn" onclick="doSignup()">${ic('plus', 16)} Create account</button>
@@ -20,7 +20,7 @@ function togglePw() {
   const p = $('#sp');
   const show = p.type === 'password';
   p.type = show ? 'text' : 'password';
-  $('#spbtn').innerHTML = ic(show ? 'eyeoff' : 'eye', 18);   // dikh raha ho to slash wali eye
+$('#spbtn').innerHTML = ic(show ? 'eye' : 'eyeoff', 18);   // dikh raha ho to slash wali eye
   $('#spbtn').title = show ? 'Hide password' : 'Show password';
 }
 
