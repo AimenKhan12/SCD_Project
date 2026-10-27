@@ -36,6 +36,21 @@ function adminOnly(req, res, next) {
   next();
 }
 
+// ---------- Notification helpers (bell icon par number inse aata hai) ----------
+// Ek user ko notification
+async function notifyUser(userId, text) {
+  if (!userId) return;
+  await pool.query('INSERT INTO notifications (user_id, text) VALUES ($1, $2)', [userId, text]);
+}
+// Saare admins ko notification
+async function notifyAdmins(text) {
+  await pool.query("INSERT INTO notifications (user_id, text) SELECT id, $1 FROM users WHERE role = 'admin'", [text]);
+}
+// Saare residents aur staff ko notification (notice ke liye)
+async function notifyEveryone(text) {
+  await pool.query("INSERT INTO notifications (user_id, text) SELECT id, $1 FROM users WHERE role IN ('resident', 'staff')", [text]);
+}
+
 // ---------- Resident Signup ----------
 app.post('/api/signup', async (req, res) => {
   try {
@@ -49,6 +64,11 @@ app.post('/api/signup', async (req, res) => {
   [name.trim(), email.trim().toLowerCase(), hash, 'resident', room.trim()]
 );
     const user = result.rows[0];
+
+    // Resident ko welcome, admin ko batao ke naya resident aaya
+    await notifyUser(user.id, 'Welcome to HostelCare! You can now submit complaints.');
+    await notifyAdmins(`New resident registered: ${user.name} (${user.room}).`);
+
     res.json({ token: makeToken(user), user: safeUser(user) });
   } catch (e) {
     if (e.code === '23505') return res.status(400).json({ error: 'This email is already registered' });
@@ -91,6 +111,7 @@ app.get('/api/staff', auth, adminOnly, async (req, res) => {
   );
   res.json(result.rows);
 });
+
 // ---------- Staff account banana (admin) ----------
 app.post('/api/staff', auth, adminOnly, async (req, res) => {
   try {
@@ -100,10 +121,14 @@ app.post('/api/staff', auth, adminOnly, async (req, res) => {
     if (!CATEGORIES.includes(category)) return res.status(400).json({ error: 'Wrong category' });
 
     const hash = await bcrypt.hash(password, 10);
-    await pool.query(
-      'INSERT INTO users (name, email, password_hash, role, category) VALUES ($1, $2, $3, $4, $5)',
+    const r = await pool.query(
+      'INSERT INTO users (name, email, password_hash, role, category) VALUES ($1, $2, $3, $4, $5) RETURNING id',
       [name.trim(), email.trim().toLowerCase(), hash, 'staff', category]
     );
+
+    // Naye staff ko welcome
+    await notifyUser(r.rows[0].id, `Welcome to HostelCare! You are the ${category} staff member.`);
+
     res.json({ ok: true });
   } catch (e) {
     if (e.code === '23505') return res.status(400).json({ error: 'This email is already registered' });
@@ -126,10 +151,18 @@ app.delete('/api/staff/:id', auth, adminOnly, async (req, res) => {
      LIMIT 1`, [s.rows[0].category, id]);
   const newId = other.rows[0] ? other.rows[0].id : null;
 
+  // Kitni complaints dusre staff ko jayengi
+  const moved = await pool.query("SELECT id FROM complaints WHERE assigned_to = $1 AND status <> 'Resolved'", [id]);
+
   await pool.query("UPDATE complaints SET assigned_to = $1 WHERE assigned_to = $2 AND status <> 'Resolved'", [newId, id]);
   await pool.query("DELETE FROM users WHERE id = $1 AND role = 'staff'", [id]);
+
+  // Jis staff ko complaints mili usko batao
+  if (newId && moved.rows.length) await notifyUser(newId, `${moved.rows.length} complaint(s) were moved to you.`);
+
   res.json({ ok: true });
 });
+
 // ---------- Complaints ----------
 app.get('/api/complaints', auth, async (req, res) => {
   let where = '';
@@ -168,10 +201,12 @@ app.post('/api/complaints', auth, async (req, res) => {
       [req.user.id, staffId, category, priority || 'Normal', visit_time || 'Anytime', description.trim()]);
 
     const id = r.rows[0].id;
-    await pool.query('INSERT INTO notifications (user_id, text) VALUES ($1, $2)',
-      [req.user.id, `Your ${category} complaint #${id} was submitted.`]);
-    if (staffId) await pool.query('INSERT INTO notifications (user_id, text) VALUES ($1, $2)',
-      [staffId, `New ${category} complaint #${id} assigned to you.`]);
+
+    // Resident, staff aur admin teeno ko notification
+    await notifyUser(req.user.id, `Your ${category} complaint #${id} was submitted.`);
+    await notifyUser(staffId, `New ${category} complaint #${id} assigned to you.`);
+    const who = await pool.query('SELECT name, room FROM users WHERE id = $1', [req.user.id]);
+    await notifyAdmins(`New ${category} complaint #${id} from ${who.rows[0].name} (${who.rows[0].room}).`);
 
     res.json({ ok: true, id });
   } catch (e) {
@@ -184,9 +219,15 @@ app.post('/api/complaints', auth, async (req, res) => {
 app.post('/api/complaints/:id/rate', auth, async (req, res) => {
   const rating = parseInt(req.body.rating);
   if (!(rating >= 1 && rating <= 5)) return res.status(400).json({ error: 'Choose 1 to 5 stars' });
-  await pool.query(
-    "UPDATE complaints SET rating = $1 WHERE id = $2 AND resident_id = $3 AND status = 'Resolved' AND rating IS NULL",
+  const r = await pool.query(
+    "UPDATE complaints SET rating = $1 WHERE id = $2 AND resident_id = $3 AND status = 'Resolved' AND rating IS NULL RETURNING assigned_to",
     [rating, req.params.id, req.user.id]);
+
+  // Rating mili to staff aur admin ko batao
+  if (r.rows[0]) {
+    await notifyUser(r.rows[0].assigned_to, `Complaint #${req.params.id} got ${rating} star(s) from the resident.`);
+    await notifyAdmins(`Complaint #${req.params.id} was rated ${rating} star(s).`);
+  }
   res.json({ ok: true });
 });
 
@@ -220,19 +261,35 @@ app.post('/api/password', auth, async (req, res) => {
 
     const hash = await bcrypt.hash(next, 10);
     await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hash, req.user.id]);
+
+    // Apne aap ko bhi message (security ke liye)
+    await notifyUser(req.user.id, 'Your password was changed.');
+
     res.json({ ok: true });
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 // ---------- Admin: complaint ka staff badalna ----------
 app.patch('/api/complaints/:id/assign', auth, adminOnly, async (req, res) => {
   const staffId = parseInt(req.body.staff_id);
   if (!staffId) return res.status(400).json({ error: 'Choose a staff member' });
+
+  // Purana staff aur resident pehle nikal lo
+  const old = await pool.query('SELECT assigned_to, resident_id FROM complaints WHERE id = $1', [req.params.id]);
+  if (!old.rows[0]) return res.status(404).json({ error: 'Complaint not found' });
+  const oldStaff = old.rows[0].assigned_to;
+
   await pool.query('UPDATE complaints SET assigned_to = $1 WHERE id = $2', [staffId, req.params.id]);
-  await pool.query('INSERT INTO notifications (user_id, text) VALUES ($1, $2)',
-    [staffId, `Complaint #${req.params.id} was assigned to you.`]);
+
+  // Naye staff, purane staff aur resident ko batao
+  const st = await pool.query('SELECT name FROM users WHERE id = $1', [staffId]);
+  await notifyUser(staffId, `Complaint #${req.params.id} was assigned to you.`);
+  if (oldStaff && oldStaff !== staffId) await notifyUser(oldStaff, `Complaint #${req.params.id} was taken away from you.`);
+  await notifyUser(old.rows[0].resident_id, `Your complaint #${req.params.id} is now handled by ${st.rows[0].name}.`);
+
   res.json({ ok: true });
 });
 
@@ -244,25 +301,42 @@ app.patch('/api/complaints/:id/status', auth, async (req, res) => {
 
   let r;
   if (req.user.role === 'admin') {
-    r = await pool.query('UPDATE complaints SET status = $1 WHERE id = $2 RETURNING resident_id', [status, req.params.id]);
+    r = await pool.query('UPDATE complaints SET status = $1 WHERE id = $2 RETURNING resident_id, assigned_to', [status, req.params.id]);
   } else {
-    r = await pool.query('UPDATE complaints SET status = $1 WHERE id = $2 AND assigned_to = $3 RETURNING resident_id',
+    r = await pool.query('UPDATE complaints SET status = $1 WHERE id = $2 AND assigned_to = $3 RETURNING resident_id, assigned_to',
       [status, req.params.id, req.user.id]);
   }
-  if (r.rows[0]) await pool.query('INSERT INTO notifications (user_id, text) VALUES ($1, $2)',
-    [r.rows[0].resident_id, `Your complaint #${req.params.id} is now ${status}.`]);
+
+  if (r.rows[0]) {
+    // Resident ko hamesha notification
+    await notifyUser(r.rows[0].resident_id, `Your complaint #${req.params.id} is now ${status}.`);
+
+    if (req.user.role === 'staff') {
+      // Staff ne badla to admin ko batao
+      const st = await pool.query('SELECT name FROM users WHERE id = $1', [req.user.id]);
+      await notifyAdmins(`Complaint #${req.params.id} marked ${status} by ${st.rows[0].name}.`);
+    } else {
+      // Admin ne badla to staff ko batao
+      await notifyUser(r.rows[0].assigned_to, `Admin changed complaint #${req.params.id} to ${status}.`);
+    }
+  }
   res.json({ ok: true });
 });
+
 // ---------- Admin: notice post karna ----------
 app.post('/api/notices', auth, adminOnly, async (req, res) => {
   const text = (req.body.text || '').trim();
   if (!text) return res.status(400).json({ error: 'Write the notice first' });
   await pool.query('INSERT INTO notices (text) VALUES ($1)', [text]);
+
+  // Saare residents aur staff ko batao
+  await notifyEveryone('New notice: ' + (text.length > 60 ? text.slice(0, 60) + '...' : text));
+
   res.json({ ok: true });
 });
+
 init().then(() => {
   console.log('Database Connected Successfully! (Neon PostgreSQL)');
   const port = process.env.PORT || 3000;
   app.listen(port, () => console.log('Server Working: http://localhost:' + port));
 }).catch(e => console.log('Database error:', e.message));
-
