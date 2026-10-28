@@ -1,7 +1,7 @@
 // Resident portal. Sidebar ka har item ek page hai.
 const me = getUser();
 if (!me || !localStorage.getItem('token')) location.href = '/';
-if (me.role !== 'resident') location.href = '/resident.html';
+if (me && me.role !== 'resident') location.href = home(me);
 
 const MENU = ['Dashboard', 'New Complaint', 'My Complaints', 'History', 'Notice Board', 'Notifications', 'Change Password'];
 const ICON = { 'Dashboard': 'grid', 'New Complaint': 'plus', 'My Complaints': 'file', 'History': 'clock', 'Notice Board': 'mega', 'Notifications': 'bell', 'Change Password': 'key' };
@@ -129,6 +129,12 @@ async function render() {
   $('#root').innerHTML = `<div class="app">
     <aside class="side" id="sd">${LOGO}
       ${MENU.map(m => `<a class="${m === view ? 'on' : ''}" onclick="go('${m}')"><i>${ic(ICON[m])}</i>${m}</a>`).join('')}
+
+      <!-- Sidebar ke neeche resident ka naam aur room -->
+      <div class="side-foot">
+        <b>${esc(me.name)}</b>
+        <small>${esc(me.room || 'Resident')}</small>
+      </div>
     </aside>
     <div class="main">
       <div class="top">
