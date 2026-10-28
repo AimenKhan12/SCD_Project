@@ -229,6 +229,17 @@ app.post('/api/complaints/:id/rate', auth, async (req, res) => {
   res.json({ ok: true });
 });
 
+// ---------- Resident: apni Pending complaint delete karna ----------
+// Sirf wahi complaint delete hogi jo is resident ki ho aur jiska status Pending ho
+app.delete('/api/complaints/:id', auth, async (req, res) => {
+  if (req.user.role !== 'resident') return res.status(403).json({ error: 'Only residents can delete their complaints' });
+  const r = await pool.query(
+    "DELETE FROM complaints WHERE id = $1 AND resident_id = $2 AND status = 'Pending' RETURNING id",
+    [req.params.id, req.user.id]);
+  if (!r.rows[0]) return res.status(400).json({ error: 'Only your Pending complaints can be deleted' });
+  res.json({ ok: true });
+});
+
 // ---------- Notices ----------
 app.get('/api/notices', auth, async (req, res) => {
   const r = await pool.query('SELECT * FROM notices ORDER BY id DESC');
