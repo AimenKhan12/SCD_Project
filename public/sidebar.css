@@ -65,3 +65,8 @@
   .top{padding:10px 14px}
   .cont{padding:14px}
 }
+
+/* Resident Complaint delete icon */
+.icon-del{background:none;border:0;cursor:pointer;padding:6px;border-radius:8px;display:inline-grid;place-items:center;transition:background .2s,transform .15s}
+.icon-del svg{color:var(--bad)}
+.icon-del:hover{background:rgba(192,40,28,.12);transform:scale(1.1)}
