@@ -90,11 +90,9 @@ app.post('/api/login', async (req, res) => {
     const ok = await bcrypt.compare(password, user.password_hash);
     if (!ok) return res.status(401).json({ error: 'Wrong email, password or role' });
 
-    // Yahan last_login update hoga kyunki password bilkul theek match ho chuka hai
-    await pool.query(
-      'UPDATE users SET last_login = NOW() WHERE id = $1',
-      [user.id]
-    );
+    // last_login peeche update hota hai (await nahi), taaki login ka jawab turant jaye
+    pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id])
+      .catch(e => console.log('last_login error:', e.message));
 
     res.json({ token: makeToken(user), user: safeUser(user) });
   } catch (e) {
