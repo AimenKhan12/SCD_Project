@@ -17,7 +17,7 @@ function draw() {
       <button type="button" class="pw-eye" id="pwbtn" title="Show password" onclick="togglePw()">${ic('eyeoff', 18)}</button>
     </div>
     <div class="err" id="er"></div>
-    <button class="btn full" onclick="doLogin()">${ic('key', 16)} Log in</button>
+    <button class="btn full" id="lbtn" onclick="doLogin()">${ic('key', 16)} Log in</button>
     ${role === 'resident'
       ? '<div class="lnk" onclick="location.href=\'/signup.html\'">New resident? Create an account</div>'
      : role === 'staff'
@@ -40,17 +40,24 @@ function togglePw() {
   const p = $('#pw');
   const show = p.type === 'password';
   p.type = show ? 'text' : 'password';
-$('#pwbtn').innerHTML = ic(show ? 'eye' : 'eyeoff', 18);  // dikh raha ho to slash wali eye
+  $('#pwbtn').innerHTML = ic(show ? 'eye' : 'eyeoff', 18);  // dikh raha ho to slash wali eye
   $('#pwbtn').title = show ? 'Hide password' : 'Show password';
 }
 
 async function doLogin() {
+  const btn = $('#lbtn');
+  if (btn.disabled) return;                 // pehle se login chal raha hai
+  btn.disabled = true;
+  btn.textContent = 'Logging in...';        // user ko pata chale ke kaam ho raha hai
+  $('#er').textContent = '';
   try {
     const data = await api('/login', 'POST', { email: $('#em').value, password: $('#pw').value, role });
     saveSession(data);
     location.href = home(data.user);   // resident, admin ya staff ka sahi page
   } catch (e) {
     $('#er').textContent = e.message;
+    btn.disabled = false;                   // galat password: button wapas normal
+    btn.innerHTML = `${ic('key', 16)} Log in`;
   }
 }
 
