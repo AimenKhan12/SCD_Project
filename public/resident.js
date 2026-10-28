@@ -43,22 +43,28 @@ function bars(rows) {
   return rows.map(r => `<div class="row"><span>${esc(r[0])}</span><div class="bar" style="width:${r[1] / max * 58 + 3}%"></div><b>${r[1]}</b></div>`).join('');
 }
 
-// Complaints table. opts.rate = rating column
+// Complaints table. opts.rate = rating column, opts.del = delete icon column
 function table(a, opts = {}) {
   if (!a.length) return '<div class="pn"><p class="empty">Nothing here yet.</p></div>';
-  const head = `<th>#</th><th>Category</th><th>Problem</th><th>Priority</th><th>Staff</th><th>Status</th>${opts.rate ? '<th>Rating</th>' : ''}`;
+  const head = `<th>#</th><th>Category</th><th>Problem</th><th>Priority</th><th>Staff</th><th>Status</th>${opts.rate ? '<th>Rating</th>' : ''}${opts.del ? '<th></th>' : ''}`;
   const rows = a.map(c => {
     const rate = opts.rate
       ? `<td>${c.rating
           ? `<span class="st">${stars(c.rating)}</span>`
           : `<select onchange="rate(${c.id}, this.value)"><option value="">Rate</option>${[5, 4, 3, 2, 1].map(n => `<option value="${n}">${n} star${n > 1 ? 's' : ''}</option>`).join('')}</select>`}</td>`
       : '';
+    // Delete icon sirf Pending complaint par dikhta hai
+    const del = opts.del
+      ? `<td>${c.status === 'Pending'
+          ? `<button class="icon-del" title="Delete complaint" onclick="deleteComplaint(${c.id})">${ic('trash', 16)}</button>`
+          : ''}</td>`
+      : '';
     return `<tr><td>${c.id}</td>
       <td>${ic(CAT_ICON[c.category], 15)} ${esc(c.category)}</td>
       <td>${esc(c.description)}<br><small>${day(c.created_at)} - Best time: ${esc(c.visit_time)}</small></td>
       <td class="${c.priority}">${c.priority}</td>
       <td>${esc(c.staff_name || 'Unassigned')}</td>
-      <td>${badge(c.status)}</td>${rate}</tr>`;
+      <td>${badge(c.status)}</td>${rate}${del}</tr>`;
   }).join('');
   return `<div class="pn"><table><tr>${head}</tr>${rows}</table></div>`;
 }
@@ -97,7 +103,7 @@ function page() {
           <button class="btn full" onclick="submitComplaint()">${ic('check', 16)} Submit complaint</button>
         </div>`;
     case 'My Complaints':
-      return `<h2>My complaints</h2><p class="sub">All complaints you have submitted.</p>${table(a)}`;
+      return `<h2>My complaints</h2><p class="sub">All complaints you have submitted. You can delete a complaint while it is Pending.</p>${table(a, { del: true })}`;
     case 'History':
       return `<h2>History</h2><p class="sub">Rate the work after a complaint is resolved.</p>${table(a.filter(c => c.status === 'Resolved'), { rate: true })}`;
     case 'Notice Board':
@@ -169,6 +175,9 @@ const submitComplaint = () => act(async () => {
 }, 'Complaint submitted');
 
 const rate = (id, value) => value && act(() => api('/complaints/' + id + '/rate', 'POST', { rating: value }), 'Thanks for rating');
+
+// Pending complaint delete karna (pehle poochta hai)
+const deleteComplaint = id => confirm('Delete this complaint? This cannot be undone.') && act(() => api('/complaints/' + id, 'DELETE'), 'Complaint deleted');
 
 const changePassword = () => act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value }), 'Password changed');
 
