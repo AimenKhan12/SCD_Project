@@ -1,0 +1,5 @@
+/* resident-sidebar.css: resident sidebar ke neeche naam aur room wala hissa */
+.side-foot{margin-top:auto;padding:12px;border-top:1px solid rgba(255,255,255,.15);color:#fff;border-radius:10px;transition:background .2s}
+.side-foot b{display:block}
+.side-foot small{color:var(--stx)}
+.side-foot:hover{background:rgba(255,255,255,.1)}
