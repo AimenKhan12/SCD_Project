@@ -1,0 +1,33 @@
+/* landing-hero.css: hero section (pehla bada hissa) ki styling */
+
+/* Peeche halka teal gradient */
+.home-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--pri2),var(--bg) 62%)}
+.home-hero-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.05fr 1fr;gap:20px;align-items:center;padding:64px 20px;min-height:460px}
+
+/* Peeche tairte hue gol blobs (rang badalna ho to background badlo) */
+.home-blob{position:absolute;border-radius:50%;filter:blur(40px);animation:blob-float 8s ease-in-out infinite}
+.home-blob.one{width:260px;height:260px;background:#14b8a6;opacity:.3;top:-80px;left:-60px}
+.home-blob.two{width:200px;height:200px;background:#3b6bff;opacity:.18;bottom:-60px;right:6%;animation-delay:-3s}
+@keyframes blob-float{50%{transform:translateY(-16px)}}
+
+/* Chhota "Hostel Complaint Management" tag (hover par upar uthta hai) */
+.home-pill{display:inline-block;padding:4px 14px;border-radius:99px;background:var(--card);border:1px solid var(--bd);color:var(--pri);font-size:13px;font-weight:600;margin-bottom:14px;transition:transform .2s,box-shadow .2s,border-color .2s}
+.home-pill:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:var(--pri)}
+
+/* Bada heading. Gradient wale shabd ka rang .home-gradient mein hai */
+.home-title{font-size:clamp(30px,5vw,48px);line-height:1.12;margin:0 0 14px;font-weight:700}
+.home-gradient{background:linear-gradient(135deg,#0b7f8f,#14b8a6);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* Heading ke neeche wali line */
+.home-text{color:var(--mut);font-size:17px;max-width:480px;margin:0 0 22px}
+
+/* Do buttons (hover base.css ke .btn se aata hai) */
+.home-buttons{display:flex;gap:12px;flex-wrap:wrap}
+.home-buttons .btn{padding:12px 22px;font-size:16px}
+
+/* ---------- Mobile ---------- */
+@media(max-width:720px){
+  .home-hero-inner{grid-template-columns:1fr;padding:40px 16px;min-height:0;text-align:center}
+  .home-text{margin:0 auto 22px}
+  .home-buttons{justify-content:center}
+}
