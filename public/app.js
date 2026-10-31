@@ -3,7 +3,7 @@ const CATEGORIES = ['Electrical', 'Plumbing', 'Cleaning', 'Internet'];
 const STATUSES = ['Pending', 'In Progress', 'Resolved'];
 
 // Role ke hisaab se kaunsa page kholna hai
-const home = u => !u ? '/' : u.role === 'resident' ? '/resident.html' : u.role === 'admin' ? '/admin.html' : '/staff.html';
+const home = u => !u ? '/login.html' : u.role === 'resident' ? '/resident.html' : u.role === 'admin' ? '/admin.html' : '/staff.html';
 
 // Icons. Use: ic('bell', 20)
 const ICONS = {
@@ -41,7 +41,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const getUser = () => JSON.parse(localStorage.getItem('user') || 'null');
 const saveSession = d => { localStorage.setItem('token', d.token); localStorage.setItem('user', JSON.stringify(d.user)); };
-const logout = () => { localStorage.clear(); location.href = '/'; };
+const logout = () => { localStorage.clear(); location.href = '/login.html'; };
 
 // Neeche chhota message
 function toast(msg) {

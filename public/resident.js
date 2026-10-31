@@ -1,6 +1,6 @@
 // Resident portal. Sidebar ka har item ek page hai.
 const me = getUser();
-if (!me || !localStorage.getItem('token')) location.href = '/';
+if (!me || !localStorage.getItem('token')) location.href = '/login.html';
 if (me && me.role !== 'resident') location.href = home(me);
 
 const MENU = ['Dashboard', 'New Complaint', 'My Complaints', 'History', 'Notice Board', 'Notifications', 'Change Password'];

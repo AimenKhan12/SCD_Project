@@ -1,6 +1,6 @@
 // admin-sidebar.js: login check, icons, logo, menu click
 const me = getUser();
-if (!me || !localStorage.getItem('token')) location.href = '/';
+if (!me || !localStorage.getItem('token')) location.href = '/login.html';
 if (me && me.role !== 'admin') location.href = home(me);
 
 // Icons, logo aur naam lagao

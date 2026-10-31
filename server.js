@@ -8,6 +8,9 @@ const { pool, init } = require('./db');
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 
 const CATEGORIES = ['Electrical', 'Plumbing', 'Cleaning', 'Internet'];
 

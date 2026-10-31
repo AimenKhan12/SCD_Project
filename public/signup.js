@@ -11,7 +11,7 @@ $('#root').innerHTML = `<div class="lg"><div class="box">${LOGO}
   </div>
   <div class="err" id="er"></div>
   <button class="btn full" id="sbtn" onclick="doSignup()">${ic('plus', 16)} Create account</button>
-  <div class="lnk" onclick="location.href='/'">Back to log in</div></div></div>`;
+  <div class="lnk" onclick="location.href='/login.html'">Back to log in</div></div></div>`;
 
 let done = false;   // account ban gaya to dobara submit na ho
 
