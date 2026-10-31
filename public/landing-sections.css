@@ -1,0 +1,65 @@
+/* landing-sections.css: numbers, about, categories, how it works, features */
+
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.sec{padding:44px 0}
+.sec h2{font-size:28px;margin:0 0 4px;font-weight:700}
+.muted{color:var(--mut);margin:0 0 18px}
+.center{text-align:center}
+
+/* Scroll karne par section upar aata hai (.js class landing-sections.js lagati hai) */
+.js .rv{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.js .rv.in{opacity:1;transform:none}
+
+/* Numbers */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding-top:22px;padding-bottom:6px}
+.stat{background:var(--card);border:1px solid var(--bd);border-top:4px solid var(--pri);border-radius:14px;padding:12px;text-align:center;transition:transform .2s,box-shadow .2s}
+.stat:hover{transform:translateY(-4px);box-shadow:var(--sh)}
+.stat b{display:block;font-size:28px}
+.stat small{color:var(--mut)}
+
+/* About */
+.about{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+.ticks{list-style:none;padding:0;margin:0}
+.ticks li{display:flex;gap:8px;align-items:center;margin:8px 0;color:var(--pri);font-weight:600}
+.role-card,.feat{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;transition:transform .2s,box-shadow .2s}
+.role-card{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.role-card:hover{transform:translateX(6px);box-shadow:var(--sh)}
+.role-card small,.feat small{display:block;color:var(--mut)}
+.role-ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--pri2);color:var(--pri);flex-shrink:0;transition:transform .3s}
+.role-card:hover .role-ic,.feat:hover .role-ic{transform:rotate(-10deg) scale(1.1)}
+
+/* Category tiles (flip) */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.tile{perspective:600px;height:140px;cursor:pointer}
+.tile-in{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.tile:hover .tile-in,.tile.flip .tile-in{transform:rotateY(180deg)}
+.tile-front,.tile-back{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:10px;border-radius:14px;border:1px solid var(--bd);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.tile-front{background:var(--card);color:var(--c);border-top:4px solid var(--c)}
+.tile-front b{color:var(--tx)}
+.tile-back{background:var(--c);color:#fff;transform:rotateY(180deg);font-size:14px}
+
+/* How it works (stepper) */
+.step-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.step-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border:2px solid var(--bd);border-radius:12px;background:var(--card);cursor:pointer;font-weight:600;transition:transform .2s,border-color .2s,box-shadow .2s}
+.step-btn span{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--bd);color:var(--mut)}
+.step-btn:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.step-btn.on{border-color:var(--pri)}
+.step-btn.on span{background:linear-gradient(135deg,#14b8a6,#0b7f8f);color:#fff}
+.step-bar{height:6px;background:var(--bd);border-radius:6px;margin:12px 0;overflow:hidden}
+.step-bar i{display:block;height:100%;background:linear-gradient(90deg,#0b7f8f,#14b8a6);transition:width .5s}
+.step-info{display:flex;gap:14px;align-items:center;padding:16px;background:var(--card);border:1px solid var(--bd);border-left:4px solid var(--pri);border-radius:0 14px 14px 0;color:var(--pri)}
+.step-info b{color:var(--tx)}
+.step-info p{margin:2px 0 0;color:var(--mut)}
+
+/* Features */
+.feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.feat:hover{transform:translateY(-6px);box-shadow:var(--sh)}
+.feat .role-ic{background:linear-gradient(135deg,#14b8a6,#0b7f8f);color:#fff;margin-bottom:10px}
+.feat b{display:block}
+
+@media(max-width:720px){
+  .about{grid-template-columns:1fr}
+  .strip{grid-template-columns:1fr 1fr}
+  .step-row{grid-template-columns:1fr 1fr}
+  .sec{padding:32px 0}
+}
