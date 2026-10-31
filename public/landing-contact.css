@@ -1,0 +1,14 @@
+/* landing-contact.css: contact desk ki styling */
+.contact{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.contact .pn{margin:0;transition:box-shadow .2s,transform .2s}
+.contact .pn:hover{box-shadow:var(--sh);transform:translateY(-3px)}
+.topics{display:flex;gap:6px;flex-wrap:wrap}
+.topic{padding:6px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--bg);cursor:pointer;font-size:13px;font-weight:600;transition:.2s}
+.topic:hover{border-color:var(--pri);transform:translateY(-2px)}
+.topic.on{background:var(--pri2);border-color:var(--pri);color:var(--pri)}
+.contact textarea{resize:none}
+.info{display:flex;gap:10px;align-items:center;margin:14px 0;color:var(--pri);transition:transform .2s}
+.info:hover{transform:translateX(6px)}
+.info span{color:var(--tx)}
+.info small{display:block;color:var(--mut)}
+@media(max-width:720px){.contact{grid-template-columns:1fr}}
