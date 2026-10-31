@@ -1,8 +1,6 @@
-/* landing-footer.css: footer (halka rang, theme jaisa) */
-.site-footer{background:var(--card);border-top:3px solid var(--pri);margin-top:20px;padding-top:18px}
-.foot{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
-.foot-links{display:flex;gap:4px;flex-wrap:wrap}
-.foot-links a{padding:8px 12px;border-radius:8px;color:var(--mut);font-weight:600;text-decoration:none;transition:background .2s,color .2s,transform .2s}
-.foot-links a:hover{background:var(--pri2);color:var(--pri);transform:translateY(-2px)}
-.copy{text-align:center;font-size:13px;color:var(--mut);padding:14px 20px}
-@media(max-width:720px){.foot{justify-content:center;text-align:center}}
+/* landing-footer.css: footer (sirf ek line ka quote) */
+.site-footer{background:var(--card);border-top:3px solid var(--pri);margin-top:20px;padding:22px 20px;text-align:center}
+
+/* Quote: hover par rang badalta hai aur halka upar uthta hai */
+.foot-quote{margin:0;color:var(--mut);font-size:15px;font-weight:600;transition:color .2s,transform .2s}
+.foot-quote:hover{color:var(--pri);transform:translateY(-2px)}
