@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="icon" href="/favicon.svg">
   <link rel="stylesheet" href="/base.css">
-    <link rel="stylesheet" href="/landing-nav.css">
+  <link rel="stylesheet" href="/landing-nav.css">
+  <link rel="stylesheet" href="/landing-hero.css">
+  <link rel="stylesheet" href="/landing-phone.css">
+  <link rel="stylesheet" href="/landing-sections.css">
+  <link rel="stylesheet" href="/landing-contact.css">
+  <link rel="stylesheet" href="/landing-footer.css">
   <title>HostelCare - Hostel Complaint Management</title>
 </head>
 <body>
@@ -13,54 +18,163 @@
   <!-- ===== HEADER ===== -->
   <header class="site-header" id="site-header">
     <div class="site-nav">
-
-      <!-- Logo (landing-icons.js lagata hai). Click karne par Home par jata hai -->
       <a class="site-logo" href="#home" data-logo aria-label="HostelCare home"></a>
-
-      <!-- Menu links. Naya link chahiye to ek <a> line copy karke add kar do -->
       <nav class="site-links" id="site-links">
         <a href="#home">Home</a>
         <a href="#about">About</a>
         <a href="#how">How it works</a>
         <a href="#contact">Contact</a>
       </nav>
-
-      <!-- Login button: login.html kholta hai. Text badalna ho to "Login" badlo -->
       <a class="btn sm" id="login-btn" href="/login.html"><span data-ic="user"></span> <span id="login-text">Login</span></a>
-
-      <!-- Mobile menu button (sirf chhoti screen par dikhta hai) -->
       <button class="site-menu-btn" id="menu-btn" type="button" aria-label="Menu"><span data-ic="menu" data-size="22"></span></button>
-
     </div>
   </header>
-    <!-- ===== HERO (pehla section) ===== -->
+
   <main>
+
+    <!-- ===== HERO ===== -->
     <section class="home-hero" id="home">
       <div class="home-blob one"></div>
       <div class="home-blob two"></div>
-
       <div class="home-hero-inner">
         <div class="home-hero-text">
           <span class="home-pill">Hostel Complaint Management</span>
           <h1 class="home-title">Hostel complaints, <span class="home-gradient">sorted in a tap.</span></h1>
           <p class="home-text">Report a problem, get the right staff member automatically, and follow it to Resolved with live notifications.</p>
-
-          <!-- Dono buttons. Text badalna ho to sirf text badlo -->
           <div class="home-buttons">
             <a class="btn" href="/login.html"><span data-ic="key"></span> Get started</a>
             <a class="btn o" href="#contact"><span data-ic="mail"></span> Contact desk</a>
           </div>
         </div>
 
-        <!-- Phone yahan aayega (agle step mein) -->
+        <!-- Phone (landing-phone.js bharta hai). Chips: ek line copy karke naya chip add karo -->
+        <div class="home-stage" id="stage">
+          <span class="chip" style="--c:var(--c-elec);top:20px;left:0"><span data-ic="zap"></span> Electrical</span>
+          <span class="chip" style="--c:var(--c-plumb);top:80px;right:0;animation-delay:-1s"><span data-ic="drop"></span> Plumbing</span>
+          <span class="chip" style="--c:var(--c-clean);bottom:80px;left:0;animation-delay:-2s"><span data-ic="trash"></span> Cleaning</span>
+          <span class="chip" style="--c:var(--c-net);bottom:30px;right:0;animation-delay:-3s"><span data-ic="wifi"></span> Internet</span>
+          <div class="phone" id="phone">
+            <div class="phone-notch"></div>
+            <div class="phone-screen" id="phone-screen"></div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Aage ke sections (About, How it works, Contact) yahan aayenge -->
+    <!-- ===== NUMBERS (naya number chahiye to ek .stat copy karo) ===== -->
+    <section class="wrap strip rv">
+      <div class="stat"><b data-n="3">0</b><small>Roles</small></div>
+      <div class="stat"><b data-n="4">0</b><small>Categories</small></div>
+      <div class="stat"><b data-n="3">0</b><small>Status stages</small></div>
+      <div class="stat"><b data-n="15">0</b><small>Sec auto-refresh</small></div>
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section class="sec rv" id="about">
+      <div class="wrap about">
+        <div>
+          <h2>About HostelCare</h2>
+          <p class="muted">A simple complaint system for hostels. Residents report problems, the right staff member gets the work automatically, and everyone stays updated.</p>
+          <ul class="ticks">
+            <li><span data-ic="check"></span> Auto-assigned to the right staff</li>
+            <li><span data-ic="check"></span> Notifications at every step</li>
+            <li><span data-ic="check"></span> Rate the work when it is done</li>
+          </ul>
+        </div>
+        <div>
+          <!-- Role card: ek card copy karke naya add karo -->
+          <div class="role-card"><div class="role-ic" data-ic="home" data-size="22"></div><div><b>Residents</b><small>Report a problem and follow it until it is solved.</small></div></div>
+          <div class="role-card"><div class="role-ic" data-ic="tool" data-size="22"></div><div><b>Staff</b><small>Receive work for your category and keep it moving.</small></div></div>
+          <div class="role-card"><div class="role-ic" data-ic="shield" data-size="22"></div><div><b>Admin</b><small>Keep the whole hostel running smoothly.</small></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CATEGORIES (tiles landing-sections.js bharta hai) ===== -->
+    <section class="sec rv" id="categories">
+      <div class="wrap">
+        <h2 class="center">Four categories</h2>
+        <p class="muted center">Hover or tap a tile.</p>
+        <div class="tiles" id="tiles"></div>
+      </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS (steps landing-sections.js bharta hai) ===== -->
+    <section class="sec rv" id="how">
+      <div class="wrap">
+        <h2 class="center">How it works</h2>
+        <p class="muted center">Click a step.</p>
+        <div id="steps"></div>
+      </div>
+    </section>
+
+    <!-- ===== FEATURES (card copy karke naya add karo) ===== -->
+    <section class="sec rv" id="features">
+      <div class="wrap">
+        <h2 class="center">Why HostelCare</h2>
+        <p class="muted center">Small things that save time.</p>
+        <div class="feats">
+          <div class="feat"><div class="role-ic" data-ic="bell" data-size="22"></div><b>Live notifications</b><small>Updates the moment something changes.</small></div>
+          <div class="feat"><div class="role-ic" data-ic="clock" data-size="22"></div><b>Status tracking</b><small>Pending, In Progress, Resolved.</small></div>
+          <div class="feat"><div class="role-ic" data-ic="users" data-size="22"></div><b>Smart assignment</b><small>The least busy staff gets the work.</small></div>
+          <div class="feat"><div class="role-ic" data-ic="star" data-size="22"></div><b>Ratings</b><small>Rate the work once it is done.</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT DESK ===== -->
+    <section class="sec rv" id="contact">
+      <div class="wrap">
+        <h2>Contact desk</h2>
+        <p class="muted">Questions about your account or a complaint? Write to the hostel office.</p>
+        <div class="contact">
+          <div class="pn">
+            <div class="topics">
+              <button type="button" class="topic on">Complaint help</button>
+              <button type="button" class="topic">Account</button>
+              <button type="button" class="topic">Other</button>
+            </div>
+            <label>Full name</label><input id="c-name">
+            <label>Room</label><input id="c-room" placeholder="Block B, Room 12">
+            <label>Email</label><input id="c-email" type="email">
+            <label>Message</label><textarea id="c-msg" rows="3"></textarea>
+            <div class="err" id="c-err"></div>
+            <button class="btn full" id="c-send" type="button"><span data-ic="send"></span> Send message</button>
+          </div>
+          <!-- Asli hostel ki details yahan likho -->
+          <div class="pn">
+            <b>Hostel help desk</b>
+            <div class="info"><span data-ic="mail" data-size="20"></span><span>office@yourhostel.com<small>Email</small></span></div>
+            <div class="info"><span data-ic="pin" data-size="20"></span><span>Hostel office<small>Ground floor</small></span></div>
+            <div class="info"><span data-ic="clock" data-size="20"></span><span>Working days<small>Office timings</small></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="wrap foot">
+      <a class="site-logo" href="#home" data-logo aria-label="HostelCare home"></a>
+      <nav class="foot-links">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#how">How it works</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="btn sm o" href="/login.html"><span data-ic="user"></span> Login</a>
+    </div>
+    <div class="copy">HostelCare, SCD Project</div>
+  </footer>
+
+  <!-- Scripts. Order na badalna -->
   <script src="/app.js"></script>
   <script src="/landing-icons.js"></script>
-    <script src="/landing-nav.js"></script>
-      <link rel="stylesheet" href="/landing-hero.css">
+  <script src="/landing-nav.js"></script>
+  <script src="/landing-phone.js"></script>
+  <script src="/landing-sections.js"></script>
+  <script src="/landing-contact.js"></script>
 </body>
 </html>
