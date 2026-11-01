@@ -4,12 +4,17 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const { pool, init } = require('./db');
+const V = require('./public/validation.js');   // form ke rules (browser bhi yahi file use karta hai)
 
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+// Database tables ek hi baar tayyar hon. Har /api request pehle yahan intezaar karti hai
+const dbReady = init().then(() => console.log('Database Connected Successfully! (Neon PostgreSQL)'));
+dbReady.catch(() => {});
+app.use('/api', async (req, res, next) => {
+  try { await dbReady; next(); }
+  catch (e) { console.log('Database error:', e.message); res.status(500).json({ error: 'Database error' }); }
 });
 
 const CATEGORIES = ['Electrical', 'Plumbing', 'Cleaning', 'Internet'];
@@ -61,8 +66,10 @@ async function notifyEveryone(text) {
 app.post('/api/signup', async (req, res) => {
   try {
     const { name, room, email, password } = req.body;
-    if (!name || !room || !email || !password) return res.status(400).json({ error: 'Please fill all fields' });
-    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+
+    // Rules validation.js mein hain. Pehli galti ka message wapas jata hai
+    const err = V.checkName(name) || V.checkRoom(room) || V.checkEmail(email) || V.checkPassword(password);
+    if (err) return res.status(400).json({ error: err });
 
     const hash = await bcrypt.hash(password, 10);
     const result = await pool.query(
@@ -87,7 +94,10 @@ app.post('/api/signup', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password, role } = req.body;
-    if (!email || !password) return res.status(400).json({ error: 'Enter email and password' });
+
+    // Login par sirf email format aur khali password check hota hai (purane passwords chalte rahein)
+    const err = V.checkEmail(email) || (password ? '' : 'Password is required.');
+    if (err) return res.status(400).json({ error: err });
 
     const result = await pool.query('SELECT * FROM users WHERE email = $1 AND role = $2', [email.trim().toLowerCase(), role]);
     const user = result.rows[0];
@@ -120,9 +130,11 @@ app.get('/api/staff', auth, adminOnly, async (req, res) => {
 app.post('/api/staff', auth, adminOnly, async (req, res) => {
   try {
     const { name, email, password, category } = req.body;
-    if (!name || !email || !password || !category) return res.status(400).json({ error: 'Please fill all fields' });
-    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
-    if (!CATEGORIES.includes(category)) return res.status(400).json({ error: 'Wrong category' });
+
+    // Rules validation.js mein hain
+    const err = V.checkName(name) || V.checkEmail(email) || V.checkPassword(password)
+      || (CATEGORIES.includes(category) ? '' : 'Wrong category');
+    if (err) return res.status(400).json({ error: err });
 
     const hash = await bcrypt.hash(password, 10);
     const r = await pool.query(
@@ -190,7 +202,10 @@ app.post('/api/complaints', auth, async (req, res) => {
     if (req.user.role !== 'resident') return res.status(403).json({ error: 'Only residents can submit complaints' });
     const { category, priority, visit_time, description } = req.body;
     if (!CATEGORIES.includes(category)) return res.status(400).json({ error: 'Choose a category' });
-    if (!description || !description.trim()) return res.status(400).json({ error: 'Please describe the problem' });
+
+    // Description ka rule validation.js mein hai (kam se kam 10 characters)
+    const err = V.checkText(description, 'Description', 10, 500);
+    if (err) return res.status(400).json({ error: err });
 
     // Us category ka wo staff jiske paas sabse kam open kaam hai
     const s = await pool.query(
@@ -270,7 +285,10 @@ app.post('/api/password', auth, async (req, res) => {
   try {
     const { old, next } = req.body;
     if (!old || !next) return res.status(400).json({ error: 'Fill both boxes' });
-    if (next.length < 6) return res.status(400).json({ error: 'New password must be at least 6 characters' });
+
+    // Naya password strong ho (validation.js) aur purane se alag ho
+    const err = V.checkPassword(next) || (old === next ? 'New password must be different from the current one.' : '');
+    if (err) return res.status(400).json({ error: err });
 
     const r = await pool.query('SELECT password_hash FROM users WHERE id = $1', [req.user.id]);
     const ok = await bcrypt.compare(old, r.rows[0].password_hash);
@@ -346,7 +364,8 @@ app.patch('/api/complaints/:id/status', auth, async (req, res) => {
 // ---------- Admin: notice post karna ----------
 app.post('/api/notices', auth, adminOnly, async (req, res) => {
   const text = (req.body.text || '').trim();
-  if (!text) return res.status(400).json({ error: 'Write the notice first' });
+  const err = V.checkText(text, 'Notice', 3, 300);
+  if (err) return res.status(400).json({ error: err });
   await pool.query('INSERT INTO notices (text) VALUES ($1)', [text]);
 
   // Saare residents aur staff ko batao
@@ -354,9 +373,11 @@ app.post('/api/notices', auth, adminOnly, async (req, res) => {
 
   res.json({ ok: true });
 });
-
-init().then(() => {
-  console.log('Database Connected Successfully! (Neon PostgreSQL)');
+// Local par chalane ke liye (node server.js). Vercel par iski zaroorat nahi
+if (require.main === module) {
   const port = process.env.PORT || 3000;
   app.listen(port, () => console.log('Server Working: http://localhost:' + port));
-}).catch(e => console.log('Database error:', e.message));
+}
+
+// Vercel ko app yahin se milti hai
+module.exports = app;

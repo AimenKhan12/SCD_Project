@@ -8,15 +8,17 @@ document.querySelectorAll('.topic').forEach(b => b.addEventListener('click', () 
 
 // Send button
 document.getElementById('c-send').addEventListener('click', () => {
-  const name = document.getElementById('c-name').value.trim();
-  const email = document.getElementById('c-email').value.trim();
-  const msg = document.getElementById('c-msg').value.trim();
-  const err = document.getElementById('c-err');
+  const room = document.getElementById('c-room').value.trim();
 
-  if (!name || !email || !msg) { err.textContent = 'Please fill your name, email and message.'; return; }
-  if (!/^\S+@\S+\.\S+$/.test(email)) { err.textContent = 'Enter a valid email address.'; return; }
+  // Rules validation.js mein hain. Room zaroori nahi, par likha ho to sahi format mein ho
+  const ok = validate([
+    ['c-name', checkName(document.getElementById('c-name').value)],
+    ['c-room', room ? checkRoom(room) : ''],
+    ['c-email', checkEmail(document.getElementById('c-email').value)],
+    ['c-msg', checkText(document.getElementById('c-msg').value, 'Message', 10, 500)]
+  ]);
+  if (!ok) return;
 
-  err.textContent = '';
   ['c-name', 'c-room', 'c-email', 'c-msg'].forEach(id => document.getElementById(id).value = '');
   toast('Message sent to the help desk');
 });

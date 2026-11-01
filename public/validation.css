@@ -1,0 +1,5 @@
+/* validation.css: galat field ka laal border aur error text */
+input.bad,textarea.bad,select.bad{border-color:var(--bad)}
+input.bad:focus,textarea.bad:focus{border-color:var(--bad);box-shadow:0 0 0 3px rgba(192,40,28,.18)}
+.field-err{color:var(--bad);font-size:13px;margin-top:4px;animation:rise .25s ease both}
+.field-err:empty{display:none}

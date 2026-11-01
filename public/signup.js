@@ -4,7 +4,7 @@ $('#root').innerHTML = `<div class="lg"><div class="box">${LOGO}
   <label>Full name</label><input id="sn" autocomplete="name">
   <label>Room (block and number)</label><input id="sr" placeholder="Block B, Room 12">
   <label>Email</label><input id="se" type="email" autocomplete="username">
-  <label>Password (at least 6 characters)</label>
+  <label>Password (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label>
   <div class="pw-wrap">
     <input id="sp" type="password" autocomplete="new-password">
     <button type="button" class="pw-eye" id="spbtn" title="Show password" onclick="togglePw()">${ic('eyeoff', 18)}</button>
@@ -20,12 +20,23 @@ function togglePw() {
   const p = $('#sp');
   const show = p.type === 'password';
   p.type = show ? 'text' : 'password';
-$('#spbtn').innerHTML = ic(show ? 'eye' : 'eyeoff', 18);   // dikh raha ho to slash wali eye
+  $('#spbtn').innerHTML = ic(show ? 'eye' : 'eyeoff', 18);   // dikh raha ho to slash wali eye
   $('#spbtn').title = show ? 'Hide password' : 'Show password';
 }
 
 async function doSignup() {
   if (done) return;
+  $('#er').textContent = '';
+
+  // Pehle har field check karo (rules validation.js mein hain)
+  const ok = validate([
+    ['sn', checkName($('#sn').value)],
+    ['sr', checkRoom($('#sr').value)],
+    ['se', checkEmail($('#se').value)],
+    ['sp', checkPassword($('#sp').value)]
+  ]);
+  if (!ok) return;
+
   try {
     const data = await api('/signup', 'POST', {
       name: $('#sn').value,
@@ -35,7 +46,6 @@ async function doSignup() {
     });
     saveSession(data);
     done = true;
-    $('#er').textContent = '';
     $('#sbtn').disabled = true;                      // button band
     toast('Account created successfully!');          // neeche message
     setTimeout(() => { location.href = '/resident.html'; }, 3000);   // 3 second baad panel (3000 = 3 sec)

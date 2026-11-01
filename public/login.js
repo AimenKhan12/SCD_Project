@@ -47,9 +47,17 @@ function togglePw() {
 async function doLogin() {
   const btn = $('#lbtn');
   if (btn.disabled) return;                 // pehle se login chal raha hai
+  $('#er').textContent = '';
+
+  // Login par sirf khali aur email format check hota hai (password ka rule nahi)
+  const ok = validate([
+    ['em', checkEmail($('#em').value)],
+    ['pw', $('#pw').value ? '' : 'Password is required.']
+  ]);
+  if (!ok) return;
+
   btn.disabled = true;
   btn.textContent = 'Logging in...';        // user ko pata chale ke kaam ho raha hai
-  $('#er').textContent = '';
   try {
     const data = await api('/login', 'POST', { email: $('#em').value, password: $('#pw').value, role });
     saveSession(data);

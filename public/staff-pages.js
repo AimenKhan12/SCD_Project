@@ -65,30 +65,35 @@ function content() {
     case 'My Complaints':
       return `<h2>My complaints</h2><p class="sub">Complaints assigned to you. Change the status from the table.</p>
         ${table(a.filter(c => c.status !== 'Resolved'), true)}`;
-    
-        // ===== Completed Work (resolved complaints) =====
+
+    // ===== Completed Work (resolved complaints) =====
     case 'Completed Work':
       return `<h2>Completed work</h2><p class="sub">Complaints you have resolved.</p>
         ${table(a.filter(c => c.status === 'Resolved'), false)}`;
-           // ===== Notice Board (sirf padhne ke liye) =====
+
+    // ===== Notice Board (sirf padhne ke liye) =====
     case 'Notice Board':
       return `<h2>Notice board</h2><p class="sub">Announcements from the hostel admin.</p>
         <div class="pn">${data.notices.length
           ? data.notices.map(n => `<div class="nt">${ic('mega', 16)} ${esc(n.text)}<br><small>${day(n.created_at)}</small></div>`).join('')
           : '<p class="empty">No notices yet.</p>'}</div>`;
-           // ===== Notifications =====
+
+    // ===== Notifications =====
     case 'Notifications':
       return `<h2>Notifications</h2><p class="sub">New complaints and updates.</p>
         <div class="pn">${data.notes.items.length
           ? data.notes.items.map(n => `<div class="nt ${n.is_read ? '' : 'u'}">${ic('bell', 16)} ${esc(n.text)}<br><small>${new Date(n.created_at).toLocaleString()}</small></div>`).join('')
           : '<p class="empty">No notifications yet.</p>'}</div>`;
-            // ===== Change Password =====
+
+    // ===== Change Password =====
     case 'Change Password':
-      return `<h2>Change password</h2><p class="sub">Use a password that is easy for you to remember.</p>
+      return `<h2>Change password</h2><p class="sub">Use a strong password.</p>
         <div class="pn fm mid"><label>Current password</label><input id="op" type="password">
-          <label>New password (at least 6 characters)</label><input id="np2" type="password">
+          <label>New password (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label><input id="np2" type="password">
+          <label>Confirm new password</label><input id="np3" type="password">
           <button class="btn full" onclick="changePassword()">${ic('key', 16)} Save password</button></div>`;
-          // ADD NEW PAGES ABOVE THIS LINE
+
+    // ADD NEW PAGES ABOVE THIS LINE
 
     default:
       return '<h2>Coming soon</h2><p class="sub">This page is not ready yet.</p>';
@@ -114,7 +119,10 @@ async function act(fn, okMessage) {
   try { await fn(); if (okMessage) toast(okMessage); } catch (e) { toast(e.message); }
   render();
 }
-const changePassword = () => act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value }), 'Password changed');
+
+// Password change: pehle teeno boxes check hote hain (validatePasswordChange validation.js mein hai)
+const changePassword = () => validatePasswordChange() && act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value }), 'Password changed');
+
 // ---------- forms ----------
 // ADD NEW FUNCTIONS ABOVE THIS LINE
 

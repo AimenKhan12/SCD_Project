@@ -89,7 +89,7 @@ function content() {
         <div class="pn fm mid"><h3>Add staff member</h3>
           <label>Name</label><input id="an">
           <label>Email</label><input id="ae" type="email">
-          <label>Password for this staff member</label><input id="ap" type="password">
+          <label>Password for this staff member (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label><input id="ap" type="password">
           <label>Category</label><select id="ac">${options(CATEGORIES)}</select>
           <button class="btn full" onclick="addStaff()">${ic('plus', 16)} Add staff</button></div>`;
     case 'Reports': {
@@ -115,9 +115,10 @@ function content() {
           ? data.notes.items.map(n => `<div class="nt ${n.is_read ? '' : 'u'}">${ic('bell', 16)} ${esc(n.text)}<br><small>${new Date(n.created_at).toLocaleString()}</small></div>`).join('')
           : '<p class="empty">No notifications yet.</p>'}</div>`;
     case 'Change Password':
-      return `<h2>Change password</h2><p class="sub">Use a password that is easy for you to remember.</p>
+      return `<h2>Change password</h2><p class="sub">Use a strong password.</p>
         <div class="pn fm mid"><label>Current password</label><input id="op" type="password">
-          <label>New password (at least 6 characters)</label><input id="np2" type="password">
+          <label>New password (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label><input id="np2" type="password">
+          <label>Confirm new password</label><input id="np3" type="password">
           <button class="btn full" onclick="changePassword()">${ic('key', 16)} Save password</button></div>`;
   }
 }
@@ -142,11 +143,22 @@ async function act(fn, okMessage) {
   render();
 }
 
-// ---------- forms ----------
-const addStaff = () => act(() => api('/staff', 'POST', { name: $('#an').value, email: $('#ae').value, password: $('#ap').value, category: $('#ac').value }), 'Staff added');
+// ---------- forms (rules validation.js mein hain) ----------
+const addStaff = () => {
+  const ok = validate([
+    ['an', checkName($('#an').value)],
+    ['ae', checkEmail($('#ae').value)],
+    ['ap', checkPassword($('#ap').value)]
+  ]);
+  if (!ok) return;
+  act(() => api('/staff', 'POST', { name: $('#an').value, email: $('#ae').value, password: $('#ap').value, category: $('#ac').value }), 'Staff added');
+};
 const removeStaff = id => confirm('Remove this staff member?') && act(() => api('/staff/' + id, 'DELETE'), 'Staff removed');
-const postNotice = () => act(() => api('/notices', 'POST', { text: $('#nn').value }), 'Notice posted');
-const changePassword = () => act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value }), 'Password changed');
+const postNotice = () => {
+  if (!validate([['nn', checkText($('#nn').value, 'Notice', 3, 300)]])) return;
+  act(() => api('/notices', 'POST', { text: $('#nn').value }), 'Notice posted');
+};
+const changePassword = () => validatePasswordChange() && act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value }), 'Password changed');
 
 // Har 15 second mein naya data (form wale pages par nahi, taaki typing na mite)
 setInterval(async () => {

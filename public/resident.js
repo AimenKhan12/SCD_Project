@@ -99,7 +99,7 @@ function page() {
           <label>Category</label><select id="nc">${options(CATEGORIES)}</select>
           <label>Priority</label><select id="np"><option>Normal</option><option>Urgent</option><option>Low</option></select>
           <label>Best time for a visit to your room</label><select id="nt">${options(['Anytime', 'Morning', 'Afternoon', 'Evening', 'After 5 PM'])}</select>
-          <label>Describe the problem</label><textarea id="nd" rows="3" maxlength="500"></textarea>
+          <label>Describe the problem (at least 10 characters)</label><textarea id="nd" rows="3" maxlength="500"></textarea>
           <button class="btn full" onclick="submitComplaint()">${ic('check', 16)} Submit complaint</button>
         </div>`;
     case 'My Complaints':
@@ -117,10 +117,11 @@ function page() {
           ? data.notes.items.map(n => `<div class="nt ${n.is_read ? '' : 'u'}">${ic('bell', 16)} ${esc(n.text)}<br><small>${new Date(n.created_at).toLocaleString()}</small></div>`).join('')
           : '<p class="empty">No notifications yet.</p>'}</div>`;
     case 'Change Password':
-      return `<h2>Change password</h2><p class="sub">Use a password that is easy for you to remember.</p>
+      return `<h2>Change password</h2><p class="sub">Use a strong password.</p>
         <div class="pn fm">
           <label>Current password</label><input id="op" type="password">
-          <label>New password (at least 6 characters)</label><input id="np2" type="password">
+          <label>New password (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label><input id="np2" type="password">
+          <label>Confirm new password</label><input id="np3" type="password">
           <button class="btn full" onclick="changePassword()">${ic('key', 16)} Save password</button>
         </div>`;
   }
@@ -166,20 +167,25 @@ async function act(fn, okMessage) {
 }
 
 // ---------- forms ----------
-const submitComplaint = () => act(async () => {
-  await api('/complaints', 'POST', {
-    category: $('#nc').value, priority: $('#np').value,
-    visit_time: $('#nt').value, description: $('#nd').value
-  });
-  view = 'My Complaints';
-}, 'Complaint submitted');
+// Complaint submit: pehle description check hoti hai (rules validation.js mein)
+const submitComplaint = () => {
+  if (!validate([['nd', checkText($('#nd').value, 'Description', 10, 500)]])) return;
+  act(async () => {
+    await api('/complaints', 'POST', {
+      category: $('#nc').value, priority: $('#np').value,
+      visit_time: $('#nt').value, description: $('#nd').value
+    });
+    view = 'My Complaints';
+  }, 'Complaint submitted');
+};
 
 const rate = (id, value) => value && act(() => api('/complaints/' + id + '/rate', 'POST', { rating: value }), 'Thanks for rating');
 
 // Pending complaint delete karna (pehle poochta hai)
 const deleteComplaint = id => confirm('Delete this complaint? This cannot be undone.') && act(() => api('/complaints/' + id, 'DELETE'), 'Complaint deleted');
 
-const changePassword = () => act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value }), 'Password changed');
+// Password change: pehle teeno boxes check hote hain (validatePasswordChange validation.js mein hai)
+const changePassword = () => validatePasswordChange() && act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value }), 'Password changed');
 
 // Har 15 second mein naya data (forms wale pages par nahi, taaki typing na mite)
 setInterval(async () => {
