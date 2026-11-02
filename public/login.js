@@ -7,7 +7,10 @@ let role = 'resident';
 const ROLE_ICON = { resident: 'home', staff: 'tool', admin: 'shield' };
 
 function draw() {
-  $('#root').innerHTML = `<div class="lg"><div class="box">${LOGO}
+  $('#root').innerHTML = `
+  <a href="/index.html" class="btn-back-corner">&larr; Back to Home</a>
+   <div class="lg"><div class="box">${LOGO}
+  
     <p class="sub">Choose your role, then log in.</p>
     <div class="roles">${['resident', 'staff', 'admin'].map(r => `<div class="role ${r === role ? 'on' : ''}" onclick="pick('${r}')"><b>${ic(ROLE_ICON[r], 30)}</b><span>${r[0].toUpperCase() + r.slice(1)}</span></div>`).join('')}</div>
     <label>Email</label><input id="em" type="email">

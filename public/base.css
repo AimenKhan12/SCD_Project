@@ -100,3 +100,58 @@ td select{width:auto;padding:4px 8px}
 .pw-eye:hover{color:var(--pri);background:var(--pri2)}
 
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+
+/* ---------- Login Back Button ---------- */
+.box-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.btn-back {
+  background: transparent;
+  border: 1px solid var(--bd);
+  color: var(--mut);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all .2s;
+  text-decoration: none;
+}
+.btn-back:hover {
+  background: var(--pri2);
+  color: var(--pri);
+  border-color: var(--pri);
+}
+/* ---------- Absolute Top-Left Back Button ---------- */
+.btn-back-corner {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: var(--card);
+  border: 1px solid var(--bd);
+  color: var(--tx);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  box-shadow: var(--sh);
+  z-index: 10;
+  transition: all .2s;
+}
+
+.btn-back-corner:hover {
+  background: var(--pri2);
+  color: var(--pri);
+  border-color: var(--pri);
+}

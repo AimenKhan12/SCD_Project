@@ -73,8 +73,8 @@ app.post('/api/signup', async (req, res) => {
 
     const hash = await bcrypt.hash(password, 10);
     const result = await pool.query(
-  'INSERT INTO users (name, email, password_hash, role, room, last_login) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *',
-  [name.trim(), email.trim().toLowerCase(), hash, 'resident', room.trim()]
+  'INSERT INTO users (name, email, password_hash, role, room,phone_number, last_login) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *',
+  [name.trim(), email.trim().toLowerCase(), hash, 'resident', room.trim(), phone ? phone.trim() : null]
 );
     const user = result.rows[0];
 
@@ -379,7 +379,7 @@ app.patch('/api/complaints/:id/status', auth, async (req, res) => {
 // ---------- Landing Page Contact Form ----------
 app.post('/api/contact', async (req, res) => {
   try {
-    const { name, room, email, message } = req.body;
+    const { name, room, email, message, phone } = req.body;
 
     // Validation check
     const err = V.checkName(name) || (room ? V.checkRoom(room) : '') || V.checkEmail(email) || V.checkText(message, 'Message', 10, 500);
