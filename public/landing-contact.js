@@ -7,18 +7,33 @@ document.querySelectorAll('.topic').forEach(b => b.addEventListener('click', () 
 }));
 
 // Send button
-document.getElementById('c-send').addEventListener('click', () => {
+document.getElementById('c-send').addEventListener('click', async () => {
   const room = document.getElementById('c-room').value.trim();
+  const nameVal = document.getElementById('c-name').value;
+  const emailVal = document.getElementById('c-email').value;
+  const msgVal = document.getElementById('c-msg').value;
 
-  // Rules validation.js mein hain. Room zaroori nahi, par likha ho to sahi format mein ho
+  // Rules validation.js mein hain
   const ok = validate([
-    ['c-name', checkName(document.getElementById('c-name').value)],
+    ['c-name', checkName(nameVal)],
     ['c-room', room ? checkRoom(room) : ''],
-    ['c-email', checkEmail(document.getElementById('c-email').value)],
-    ['c-msg', checkText(document.getElementById('c-msg').value, 'Message', 10, 500)]
+    ['c-email', checkEmail(emailVal)],
+    ['c-msg', checkText(msgVal, 'Message', 10, 500)]
   ]);
   if (!ok) return;
 
-  ['c-name', 'c-room', 'c-email', 'c-msg'].forEach(id => document.getElementById(id).value = '');
-  toast('Message sent to the help desk');
+  try {
+    // Database mein save karne ke liye API call
+    await api('/contact', 'POST', {
+      name: nameVal,
+      room: room,
+      email: emailVal,
+      message: msgVal
+    });
+
+    ['c-name', 'c-room', 'c-email', 'c-msg'].forEach(id => document.getElementById(id).value = '');
+    toast('Message sent and saved successfully!');
+  } catch (e) {
+    alert(e.message || 'Failed to send message');
+  }
 });

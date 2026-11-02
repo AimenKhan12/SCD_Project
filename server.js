@@ -89,24 +89,40 @@ app.post('/api/signup', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 // ---------- Login ----------
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password, role } = req.body;
 
-    // Login par sirf email format aur khali password check hota hai (purane passwords chalte rahein)
+    // Login par sirf email format aur khali password check hota hai
     const err = V.checkEmail(email) || (password ? '' : 'Password is required.');
     if (err) return res.status(400).json({ error: err });
 
-    const result = await pool.query('SELECT * FROM users WHERE email = $1 AND role = $2', [email.trim().toLowerCase(), role]);
-    const user = result.rows[0];
-    if (!user) return res.status(401).json({ error: 'Wrong email, password or role' });
+    const cleanEmail = email.trim().toLowerCase();
 
+    // 1. Pehle sirf email se check karo ke account exist karta hai ya nahi
+    const emailCheck = await pool.query('SELECT * FROM users WHERE email = $1', [cleanEmail]);
+    const userByemail = emailCheck.rows[0];
+
+    if (!userByemail) {
+      return res.status(401).json({ error: 'No account found with this email.' });
+    }
+
+    // 2. Agar email mil gayi, par user ne role galat select kiya hai
+    const userWithRole = await pool.query('SELECT * FROM users WHERE email = $1 AND role = $2', [cleanEmail, role]);
+    const user = userWithRole.rows[0];
+
+    if (!user) {
+      return res.status(401).json({ error: 'Wrong role selected for this account.' });
+    }
+
+    // 3. Ab password check karo
     const ok = await bcrypt.compare(password, user.password_hash);
-    if (!ok) return res.status(401).json({ error: 'Wrong email, password or role' });
+    if (!ok) {
+      return res.status(401).json({ error: 'Incorrect password.' });
+    }
 
-    // last_login peeche update hota hai (await nahi), taaki login ka jawab turant jaye
+    // last_login peeche update hota hai
     pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id])
       .catch(e => console.log('last_login error:', e.message));
 
@@ -359,6 +375,26 @@ app.patch('/api/complaints/:id/status', auth, async (req, res) => {
     }
   }
   res.json({ ok: true });
+});
+// ---------- Landing Page Contact Form ----------
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, room, email, message } = req.body;
+
+    // Validation check
+    const err = V.checkName(name) || (room ? V.checkRoom(room) : '') || V.checkEmail(email) || V.checkText(message, 'Message', 10, 500);
+    if (err) return res.status(400).json({ error: err });
+
+    await pool.query(
+      'INSERT INTO contacts (name, room, email, message) VALUES ($1, $2, $3, $4)',
+      [name.trim(), room ? room.trim() : null, email.trim().toLowerCase(), message.trim()]
+    );
+
+    res.json({ ok: true });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ---------- Admin: notice post karna ----------

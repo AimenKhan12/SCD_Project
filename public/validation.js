@@ -41,7 +41,14 @@ function checkRoom(value) {
   if (!/^[A-Za-z0-9 ,\-]+$/.test(v)) return 'Room can only have letters, numbers, spaces, comma and hyphen.';
   return '';
 }
-
+// Naya Phone Number Validation Function
+function checkPhone(value) {
+  const v = String(value || '').trim();
+  if (!v) return 'Phone number is required.';
+  if (!/^\d+$/.test(v)) return 'Phone number must contain only numbers.';
+  if (v.length <= 11) return 'Phone number must be more than 11 digits.';
+  return '';
+}
 // Lamba text (complaint, message, notice): kam se kam aur zyada se zyada length
 function checkText(value, label, min, max) {
   const v = String(value || '').trim();
@@ -101,5 +108,5 @@ if (typeof document !== 'undefined') {
 
 // server.js isi file ko require karta hai
 if (typeof module !== 'undefined') {
-  module.exports = { MIN_PASSWORD, checkRequired, checkName, checkEmail, checkPassword, checkRoom, checkText, checkSame };
+  module.exports = { MIN_PASSWORD, checkRequired, checkName, checkEmail, checkPassword, checkRoom, checkPhone, checkText, checkSame };
 }

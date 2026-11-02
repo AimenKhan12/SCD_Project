@@ -3,6 +3,7 @@ $('#root').innerHTML = `<div class="lg"><div class="box">${LOGO}
   <p class="sub">Create a resident account.</p>
   <label>Full name</label><input id="sn" autocomplete="name">
   <label>Room (block and number)</label><input id="sr" placeholder="Block B, Room 12">
+  <label>Phone number (e.g. 030012345678)</label><input id="sph" type="tel" placeholder="030012345678">
   <label>Email</label><input id="se" type="email" autocomplete="username">
   <label>Password (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label>
   <div class="pw-wrap">
@@ -32,6 +33,7 @@ async function doSignup() {
   const ok = validate([
     ['sn', checkName($('#sn').value)],
     ['sr', checkRoom($('#sr').value)],
+    ['sph', checkPhone($('#sph').value)],
     ['se', checkEmail($('#se').value)],
     ['sp', checkPassword($('#sp').value)]
   ]);
@@ -41,6 +43,7 @@ async function doSignup() {
     const data = await api('/signup', 'POST', {
       name: $('#sn').value,
       room: $('#sr').value,
+      phone: $('#sph').value,
       email: $('#se').value,
       password: $('#sp').value
     });
