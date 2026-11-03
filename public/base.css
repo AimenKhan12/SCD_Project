@@ -1,108 +1,210 @@
-/* base.css: colors, login/signup, form, buttons, top bar, table */
-:root{--bg:#eef6f5;--card:#fff;--tx:#0d2b33;--mut:#5a7680;--pri:#0b7f8f;--pri2:#d7f3ef;--bd:#d5e5e3;--bad:#c0281c;--sh:0 6px 18px rgba(10,47,58,.10);
---side:#0a2f3a;--stx:#bcd9d9;--acc:#2fb7a3;--warn:#8a5300;--warnbg:#ffefc7;--info:#1747b8;--infobg:#dce7ff;--ok:#0f6b3a;--okbg:#d5f5e1;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* =====================================================================
+   base.css   (colors, buttons, forms, table)
+   Login, Signup, Resident, Admin, Staff, sab pages isi ko use karte hain.
+
+
+   1. Poori site ka main rang    -> neeche "1. COLORS" mein --pri aur --pri2
+   2. Button ka rang             -> --btn1 aur --btn2
+   3. Avatar (gol naam wala)     -> --av1, --av2, --av-text
+   4. Badge ke rang (Pending...) -> --warn, --info, --ok (aur unke bg)
+   5. Sidebar ka dark rang       -> --side  (sidebar ka design sidebar.css mein hai)
+   ===================================================================== */
+/* ---------------------------------------------------------------------
+   1. COLORS  (light mode). Har rang ek variable hai, jise poori site use karti hai
+   --------------------------------------------------------------------- */
+:root{
+  --bg:#eef6f5;        /* poore page ka peeche ka rang (halka teal-grey) */
+  --card:#fff;         /* white boxes, cards, top bar ka rang */
+  --tx:#0d2b33;        /* main text ka rang (gehra neela-hara) */
+  --mut:#5a7680;       /* halka grey text (sub heading, label, small text) */
+  --pri:#0b7f8f;       /* MAIN TEAL RANG: links, hover text, selected border */
+  --pri2:#d7f3ef;      /* halka teal: hover background, selected role card */
+  --bd:#d5e5e3;        /* sab borders (lakeerein) ka rang */
+  --bad:#c0281c;       /* LAAL: error text, delete button, bell ka number */
+  --sh:0 6px 18px rgba(10,47,58,.10);   /* halka saaya (shadow) cards par */
+
+
+  --side:#0a2f3a;      /* SIDEBAR ka dark rang (sidebar.css use karti hai) */
+  --stx:#bcd9d9;       /* sidebar ke andar text ka rang */
+  --acc:#2fb7a3;       /* accent: rating ke stars */
+
+  --warn:#8a5300;      /* PENDING badge: text ka rang */
+  --warnbg:#ffefc7;    /* PENDING badge: peeche ka rang (peela) */
+  --info:#1747b8;      /* IN PROGRESS badge: text */
+  --infobg:#dce7ff;    /* IN PROGRESS badge: peeche ka rang (neela) */
+  --ok:#0f6b3a;        /* RESOLVED badge: text */
+  --okbg:#d5f5e1;      /* RESOLVED badge: peeche ka rang (hara) */
+
+  --btn1:#0b7f8f;      /* BUTTON: gradient ka pehla rang */
+  --btn2:#0a6b88;      /* BUTTON: gradient ka doosra rang */
+  --btn-glow:rgba(11,127,143,.35);   /* button par cursor le jane par glow ka rang */
+
+  --av1:#14b8a6;       /* AVATAR (gol naam ka initial): gradient pehla rang */
+  --av2:#2fb7a3;       /* AVATAR: gradient doosra rang */
+  --av-text:#08262d;   /* AVATAR ke andar ke akshar ka rang */
+
+  /* Ye 3 lines mobile ke notch/safe area ke liye hain. Inhe na chhedna */
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px)
+}
+
+
+/* ---------------------------------------------------------------------
+   2. DARK MODE COLORS
+   Ye tab lagte hain jab phone/laptop ki setting dark mode par ho.
+   Upar wale variables ki jagah ye rang use hote hain.
+   (button aur avatar ke rang dark mode mein bhi wahi rehte hain)
+   --------------------------------------------------------------------- */
 @media (prefers-color-scheme:dark){:root{--bg:#08171c;--card:#0f2730;--tx:#e3f2f1;--mut:#8fb0b2;--pri:#3cd5c3;--pri2:#123c3d;--bd:#1e3f46;--bad:#ff8f84;--sh:0 6px 18px rgba(0,0,0,.4);--side:#051b21;--warn:#ffcf70;--warnbg:#4a3710;--info:#a9c1ff;--infobg:#1f3166;--ok:#7fe0a5;--okbg:#14412a}}
+
+
+/* ---------------------------------------------------------------------
+   3. BASIC SETUP (poore page ki buniyaad)
+   --------------------------------------------------------------------- */
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
+*{box-sizing:border-box}                     /* padding ke saath bhi box ki width sahi rahe */
 html,body{height:100%}
+/* BODY: page ka peeche ka rang, text ka rang, aur FONT (font badalna ho to yahin) */
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
-button,input,select,textarea{font:inherit;color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}   /* buttons aur boxes bhi wahi font use karein */
 
-@keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
-@keyframes wig{25%{transform:rotate(-14deg)}75%{transform:rotate(14deg)}}
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
-/* ---------- Login / Signup box ---------- */
+/* ---------------------------------------------------------------------
+   4. ANIMATIONS (naam se pata chalta hai, neeche kahin use hoti hain)
+   --------------------------------------------------------------------- */
+@keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}              /* login box ka pop-up hona */
+@keyframes wig{25%{transform:rotate(-14deg)}75%{transform:rotate(14deg)}}                      /* hilna (bell, role icon) */
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}        /* neeche se upar aana (page content) */
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}                              /* bar ka bharna (charts) */
+
+
+/* ---------------------------------------------------------------------
+   5. LOGIN / SIGNUP PAGE
+   --------------------------------------------------------------------- */
+/* Poori screen ka peeche ka hissa (halka teal gradient), box beech mein */
 .lg{min-height:100%;display:grid;place-items:center;padding:16px;background:radial-gradient(900px 400px at 10% 0,var(--pri2),transparent),var(--bg)}
+/* WHITE BOX jisme login/signup form hai (border, gol kone, saaya) */
 .box{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:28px;width:100%;max-width:430px;box-shadow:var(--sh);animation:pop .4s ease both}
 
-/* Logo */
+/* LOGO (HostelCare ka naam + chhoti line) */
 .logo{display:flex;align-items:center;gap:10px}
-.logo b{font-size:19px;display:block;line-height:1.1}
-.logo small{color:var(--mut);font-size:12px}
-.box .logo{justify-content:center;margin-bottom:14px}
+.logo b{font-size:19px;display:block;line-height:1.1}         /* "HostelCare" ka size */
+.logo small{color:var(--mut);font-size:12px}                   /* "Complaint Management" */
+.box .logo{justify-content:center;margin-bottom:14px}         /* box ke andar logo beech mein */
 
+/* Choti heading ke neeche wali halki line ("Choose your role...") */
 .sub{color:var(--mut);margin:0 0 14px;font-size:14px}
 .box .sub{text-align:center}
 
-/* Role cards */
+/* ROLE CARDS: Resident / Staff / Admin ke 3 dabbe (login page par) */
 .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
 .role{border:2px solid var(--bd);background:var(--bg);border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s}
-.role:hover{transform:translateY(-4px);box-shadow:var(--sh);border-color:var(--pri)}
-.role.on{border-color:var(--pri);background:var(--pri2)}
+.role:hover{transform:translateY(-4px);box-shadow:var(--sh);border-color:var(--pri)}   /* cursor le jane par upar uthta hai */
+.role.on{border-color:var(--pri);background:var(--pri2)}                                 /* chuna hua role (teal border) */
 .role b{display:block;font-size:28px}
-.role:hover b{animation:wig .5s}
-.role b svg{color:var(--pri)}
-.role span{font-size:13px;font-weight:600}
+.role:hover b{animation:wig .5s}                              /* hover par icon hilta hai */
+.role b svg{color:var(--pri)}                                  /* role icon ka rang */
+.role span{font-size:13px;font-weight:600}                    /* role ka naam */
 
-/* Form */
-label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+
+/* ---------------------------------------------------------------------
+   6. FORM (label, input boxes, dropdown, textarea)
+   --------------------------------------------------------------------- */
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}   /* box ke upar ka chhota naam */
+/* Saare input, dropdown aur textarea ka design */
 input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);transition:border-color .2s,box-shadow .2s}
+/* Box par click karne par teal border aur halka ghera */
 input:focus,select:focus,textarea:focus{outline:0;border-color:var(--pri);box-shadow:0 0 0 3px var(--pri2)}
 
-/* Buttons */
-.btn{background:linear-gradient(135deg,#0b7f8f,#0a6b88);color:#fff;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:600;transition:transform .15s,box-shadow .15s,filter .15s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(11,127,143,.35);filter:brightness(1.08)}
-.btn:active{transform:translateY(0) scale(.98)}
-.btn.full{width:100%;margin-top:16px}
-.btn.sm{padding:5px 11px;font-size:13px}
-.btn.o{background:transparent;color:var(--pri);border:1px solid var(--pri)}
-.btn.o:hover{background:var(--pri2);box-shadow:none}
-.btn.d{background:var(--bad);color:#fff}
-.btn svg{vertical-align:-3px;margin-right:2px}
 
+/* ---------------------------------------------------------------------
+   7. BUTTONS
+   --------------------------------------------------------------------- */
+/* NORMAL BUTTON (teal gradient). Rang badalna ho to :root mein --btn1, --btn2 */
+.btn{background:linear-gradient(135deg,var(--btn1),var(--btn2));color:#fff;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:600;transition:transform .15s,box-shadow .15s,filter .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 16px var(--btn-glow);filter:brightness(1.08)}   /* hover: upar uthta + glow + chamak */
+.btn:active{transform:translateY(0) scale(.98)}                                                          /* dabane par thoda chhota */
+.btn.full{width:100%;margin-top:16px}            /* poori width ka button (Login, Create account) */
+.btn.sm{padding:5px 11px;font-size:13px}         /* chhota button (Log out, Remove) */
+.btn.o{background:transparent;color:var(--pri);border:1px solid var(--pri)}   /* OUTLINE button: sirf border, andar khali */
+.btn.o:hover{background:var(--pri2);box-shadow:none}                           /* outline button ka hover */
+.btn.d{background:var(--bad);color:#fff}         /* DELETE/REMOVE button (laal) */
+.btn svg{vertical-align:-3px;margin-right:2px}   /* button ke andar icon ki jagah */
+
+/* LINK jaisa text ("New resident? Create an account", "Back to log in") */
 .lnk{color:var(--pri);cursor:pointer;font-size:14px;text-align:center;margin-top:14px;font-weight:600}
 .lnk:hover{text-decoration:underline}
+/* ERROR text (laal) jo form ke neeche aata hai */
 .err{color:var(--bad);font-size:13px;margin-top:8px;min-height:18px}
+/* Bahut chhoti halki line ("Staff accounts are created by the admin") */
 .hint{font-size:12px;color:var(--mut);margin-top:14px;text-align:center}
 
-/* ---------- Top bar ---------- */
+
+/* ---------------------------------------------------------------------
+   8. TOP BAR (panel ke upar wali patti: bell, naam, avatar, Log out)
+   --------------------------------------------------------------------- */
 .top{display:flex;align-items:center;gap:12px;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--bd);flex-shrink:0}
-.sp{flex:1}
-.who{line-height:1.2;font-weight:600;text-align:right}
-.who small{color:var(--mut);display:block;font-weight:400;text-transform:capitalize}
-.top .nm{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ham{display:none;background:none;border:0;cursor:pointer;color:var(--tx)}
+.sp{flex:1}                                      /* khali jagah jo cheezon ko right dhakelti hai */
+.who{line-height:1.2;font-weight:600;text-align:right}                                  /* naam + role (right side) */
+.who small{color:var(--mut);display:block;font-weight:400;text-transform:capitalize}   /* naam ke neeche role/room */
+.top .nm{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}    /* lamba naam ... se kat jaye */
+.ham{display:none;background:none;border:0;cursor:pointer;color:var(--tx)}             /* 3 lines wala menu button (sirf mobile par dikhta hai) */
+/* BELL ICON aur uske upar ka laal number */
 .bell{position:relative;cursor:pointer;margin-right:6px;display:inline-block;color:var(--tx)}
 .bell:hover{animation:wig .5s}
 .bell i{position:absolute;top:-6px;right:-9px;background:var(--bad);color:#fff;font-style:normal;font-size:11px;border-radius:9px;padding:0 5px}
-.av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#14b8a6,#2fb7a3);color:#08262d;display:grid;place-items:center;font-weight:700;font-size:14px;transition:transform .2s}
+/* AVATAR (gol, naam ke pehle akshar). Rang :root mein --av1, --av2, --av-text */
+.av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--av1),var(--av2));color:var(--av-text);display:grid;place-items:center;font-weight:700;font-size:14px;transition:transform .2s}
 .av:hover{transform:scale(1.12) rotate(6deg)}
 
-/* ---------- Content, panels, table ---------- */
-.cont{padding:20px;max-width:900px;margin:0 auto}
-.cont>*{animation:rise .45s ease both}
+
+/* ---------------------------------------------------------------------
+   9. CONTENT, PANELS AUR TABLE (panel ke beech ka hissa)
+   --------------------------------------------------------------------- */
+.cont{padding:20px;max-width:900px;margin:0 auto}                 /* beech wala area */
+.cont>*{animation:rise .45s ease both}                            /* har cheez neeche se upar aati hai */
 .cont>*:nth-child(2){animation-delay:.07s}.cont>*:nth-child(3){animation-delay:.14s}.cont>*:nth-child(4){animation-delay:.21s}.cont>*:nth-child(5){animation-delay:.28s}
-.cont h2{margin:0 0 4px;font-size:22px}
-.cont h3{margin:0 0 6px;font-size:16px}
+.cont h2{margin:0 0 4px;font-size:22px}                           /* page ki bari heading */
+.cont h3{margin:0 0 6px;font-size:16px}                           /* chhoti heading */
+/* PANEL: white box jisme table, form, chart hote hain */
 .pn{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;margin-bottom:14px;overflow-x:auto}
-.fm{max-width:480px}
-.empty{color:var(--mut);padding:8px 0;margin:0}
-small{color:var(--mut)}
+.fm{max-width:480px}                                              /* form wala panel (choti width) */
+.empty{color:var(--mut);padding:8px 0;margin:0}                  /* "Nothing here yet." */
+small{color:var(--mut)}                                           /* har <small> text halka grey */
 
+/* TABLE (complaints, staff list) */
 table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--bd);vertical-align:middle}
-th{color:var(--mut);font-weight:600;font-size:13px}
-tr:last-child td{border-bottom:0}
-table svg{vertical-align:-3px;color:var(--pri)}
-table tr:hover td{background:var(--pri2)}
-td select{width:auto;padding:4px 8px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--bd);vertical-align:middle}   /* har cell */
+th{color:var(--mut);font-weight:600;font-size:13px}              /* table ki heading wali row */
+tr:last-child td{border-bottom:0}                                 /* aakhri row ki neeche ki line nahi */
+table svg{vertical-align:-3px;color:var(--pri)}                  /* table ke andar icon */
+table tr:hover td{background:var(--pri2)}                         /* row par cursor aaye to halka teal */
+td select{width:auto;padding:4px 8px}                             /* table ke andar dropdown (status, staff) */
 
-/* Message at bottom */
+/* TOAST: neeche aane wala chhota message ("Staff added", "Complaint submitted") */
 .tt{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:10px;font-size:14px;z-index:9}
 
-/* ---------- Password eye icon (password box ke andar, right side) ---------- */
-.pw-wrap{position:relative}
-.pw-wrap input{padding-right:44px}
-.pw-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;cursor:pointer;color:var(--mut);display:grid;place-items:center;padding:6px;border-radius:8px;transition:color .2s,background .2s}
-.pw-eye:hover{color:var(--pri);background:var(--pri2)}
 
+/* ---------------------------------------------------------------------
+   10. PASSWORD EYE ICON (password box ke andar right side wala aankh ka icon)
+   --------------------------------------------------------------------- */
+.pw-wrap{position:relative}                       /* box aur icon ko ek saath rakhta hai */
+.pw-wrap input{padding-right:44px}                /* icon ke liye jagah chhodta hai */
+.pw-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;cursor:pointer;color:var(--mut);display:grid;place-items:center;padding:6px;border-radius:8px;transition:color .2s,background .2s}
+.pw-eye:hover{color:var(--pri);background:var(--pri2)}   /* hover par teal */
+
+
+/* ---------------------------------------------------------------------
+   11. ANIMATION BAND KARNA (jin logon ne phone mein "reduce motion" on kiya ho)
+   --------------------------------------------------------------------- */
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 
-/* ---------- Login Back Button ---------- */
+/* ---------------------------------------------------------------------
+   12. BACK BUTTON (login/signup page par "Back" wala button)
+   --------------------------------------------------------------------- */
+/* Version 1: box ke andar wali row jisme Back button aur logo saath hote hain */
 .box-header-row {
   display: flex;
   align-items: center;
@@ -110,9 +212,9 @@ td select{width:auto;padding:4px 8px}
   margin-bottom: 14px;
 }
 .btn-back {
-  background: transparent;
-  border: 1px solid var(--bd);
-  color: var(--mut);
+  background: transparent;              /* andar khali */
+  border: 1px solid var(--bd);          /* halka border */
+  color: var(--mut);                    /* grey text */
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 13px;
@@ -124,16 +226,17 @@ td select{width:auto;padding:4px 8px}
   text-decoration: none;
 }
 .btn-back:hover {
-  background: var(--pri2);
+  background: var(--pri2);              /* hover par halka teal */
   color: var(--pri);
   border-color: var(--pri);
 }
-/* ---------- Absolute Top-Left Back Button ---------- */
+
+/* Version 2: screen ke upar LEFT corner mein alag se Back button */
 .btn-back-corner {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  background: var(--card);
+  top: 20px;                            /* upar se doori */
+  left: 20px;                           /* left se doori */
+  background: var(--card);              /* white button */
   border: 1px solid var(--bd);
   color: var(--tx);
   border-radius: 8px;
@@ -146,10 +249,9 @@ td select{width:auto;padding:4px 8px}
   gap: 6px;
   text-decoration: none;
   box-shadow: var(--sh);
-  z-index: 10;
+  z-index: 10;                          /* baaki cheezon ke upar dikhe */
   transition: all .2s;
 }
-
 .btn-back-corner:hover {
   background: var(--pri2);
   color: var(--pri);

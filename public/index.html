@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/landing-sections.css">
   <link rel="stylesheet" href="/landing-contact.css">
   <link rel="stylesheet" href="/landing-footer.css">
+  <link rel="stylesheet" href="/custom.css">
   <title>HostelCare - Hostel Complaint Management</title>
 </head>
 <body>
@@ -25,42 +26,32 @@
         <a href="#about">About</a>
         <a href="#how">How it works</a>
         <a href="#contact">Contact</a>
+      
       </nav>
       <a class="btn sm" id="login-btn" href="/login.html"><span data-ic="user"></span> <span id="login-text">Login</span></a>
+      <a class="btn sm" id="login-btn" href="/signup.html"><span data-ic="user"></span> <span id="login-text">Create Account</span></a>
+      
       <button class="site-menu-btn" id="menu-btn" type="button" aria-label="Menu"><span data-ic="menu" data-size="22"></span></button>
     </div>
   </header>
 
   <main>
-
-    <!-- ===== HERO ===== -->
-    <section class="home-hero" id="home">
-      <div class="home-blob one"></div>
-      <div class="home-blob two"></div>
-      <div class="home-hero-inner">
-        <div class="home-hero-text">
-          <span class="home-pill">Hostel Complaint Management</span>
-          <h1 class="home-title">Hostel complaints, <span class="home-gradient">sorted in a tap.</span></h1>
-          <p class="home-text">Report a problem, get the right staff member automatically, and follow it to Resolved with live notifications.</p>
-          <div class="home-buttons">
-            <a class="btn" href="/login.html"><span data-ic="key"></span> Get started</a>
-            <a class="btn o" href="#contact"><span data-ic="mail"></span> Contact desk</a>
-          </div>
-        </div>
-
-        <!-- Phone (landing-phone.js bharta hai). Chips: ek line copy karke naya chip add karo -->
-        <div class="home-stage" id="stage">
-          <span class="chip" style="--c:var(--c-elec);top:20px;left:0"><span data-ic="zap"></span> Electrical</span>
-          <span class="chip" style="--c:var(--c-plumb);top:80px;right:0;animation-delay:-1s"><span data-ic="drop"></span> Plumbing</span>
-          <span class="chip" style="--c:var(--c-clean);bottom:80px;left:0;animation-delay:-2s"><span data-ic="trash"></span> Cleaning</span>
-          <span class="chip" style="--c:var(--c-net);bottom:30px;right:0;animation-delay:-3s"><span data-ic="wifi"></span> Internet</span>
-          <div class="phone" id="phone">
-            <div class="phone-notch"></div>
-            <div class="phone-screen" id="phone-screen"></div>
-          </div>
-        </div>
+<section class="home-hero" id="home">
+  <!-- Yeh image background ke tor par kaam karegi -->
+  <img src="/home.jpg" class="hero-bg-img" alt="Hostel Room">
+  
+  <div class="home-hero-inner">
+    <div class="home-hero-text">
+      <span class="home-pill">Hostel Complaint Management</span>
+      <h1 class="home-title">Hostel complaints, <span class="home-gradient">sorted in a tap.</span></h1>
+      <p class="home-text">Report a problem, get the right staff member automatically, and follow it to Resolved with live notifications.</p>
+      <div class="home-buttons">
+        <a class="btn" href="/login.html"><span data-ic="key"></span> Get started</a>
+        <a class="btn o" href="#contact"><span data-ic="mail"></span> Contact desk</a>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
     <!-- ===== NUMBERS (naya number chahiye to ek .stat copy karo) ===== -->
     <section class="wrap strip rv">

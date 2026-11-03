@@ -1,3 +1,4 @@
+
 // landing-phone.js: hero ka phone. Category chuno, Submit dabao, timeline chalti hai.
 // Category ka naam, icon, rang (landing-phone.css se), sample text, tile ka text: sab yahin se aata hai
 const CATS = [

@@ -1,0 +1,14 @@
+/*.home-pill{background:rgb(181, 203, 17)} */
+
+/* Sirf doosre card (Categories) ka background change karne ke liye 
+.wrap.strip.rv .stat:nth-child(4) {
+  background: #74e70f; 
+}     */
+
+.tiles .tile:nth-child(1){--c:#0b7f8f !important}  
+.tiles .tile:nth-child(2){--c:#0b7f8f!important}  
+.tiles .tile:nth-child(3){--c:#0b7f8f!important}  
+.tiles .tile:nth-child(4){--c:#0b7f8f !important}  
+
+
+

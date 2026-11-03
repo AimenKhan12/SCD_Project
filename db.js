@@ -21,6 +21,7 @@ async function init() {
     )
   `);
   await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login TIMESTAMP');
+  await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS phone_number TEXT');
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS complaints (
@@ -51,6 +52,17 @@ async function init() {
       user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
       text TEXT NOT NULL,
       is_read BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS contacts (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      room TEXT,
+      email TEXT NOT NULL,
+      message TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);

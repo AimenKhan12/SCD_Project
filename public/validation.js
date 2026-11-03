@@ -41,12 +41,11 @@ function checkRoom(value) {
   if (!/^[A-Za-z0-9 ,\-]+$/.test(v)) return 'Room can only have letters, numbers, spaces, comma and hyphen.';
   return '';
 }
-// Naya Phone Number Validation Function
+// Phone number: spaces ya dash chalte hain, par asli digits 11 hon (jaise 03001234567)
 function checkPhone(value) {
-  const v = String(value || '').trim();
+  const v = String(value || '').replace(/[\s-]/g, '');
   if (!v) return 'Phone number is required.';
-  if (!/^\d+$/.test(v)) return 'Phone number must contain only numbers.';
-  if (v.length <= 11) return 'Phone number must be more than 11 digits.';
+  if (!/^[0-9]{11}$/.test(v)) return 'Phone number must be 11 digits, like 03001234567.';
   return '';
 }
 // Lamba text (complaint, message, notice): kam se kam aur zyada se zyada length

@@ -10,6 +10,10 @@ $('#root').innerHTML = `<div class="lg"><div class="box">${LOGO}
     <input id="sp" type="password" autocomplete="new-password">
     <button type="button" class="pw-eye" id="spbtn" title="Show password" onclick="togglePw()">${ic('eyeoff', 18)}</button>
   </div>
+  <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px; text-align: left; width: 100%;">
+  <input type="checkbox" id="sc" style="width: 18px; height: 18px; margin: 0; cursor: pointer;">
+  <label for="sc" style="margin: 0; cursor: pointer; font-weight: normal; display: inline;">I confirm this password</label>
+</div>
   <div class="err" id="er"></div>
   <button class="btn full" id="sbtn" onclick="doSignup()">${ic('plus', 16)} Create account</button>
   <div class="lnk" onclick="location.href='/login.html'">Back to log in</div></div></div>`;
@@ -28,7 +32,10 @@ function togglePw() {
 async function doSignup() {
   if (done) return;
   $('#er').textContent = '';
-
+if (!$('#sc').checked) {
+    $('#er').textContent = 'Please confirm your password by checking the box.';
+    return;
+  }
   // Pehle har field check karo (rules validation.js mein hain)
   const ok = validate([
     ['sn', checkName($('#sn').value)],

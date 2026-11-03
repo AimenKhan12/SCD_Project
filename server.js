@@ -65,17 +65,19 @@ async function notifyEveryone(text) {
 // ---------- Resident Signup ----------
 app.post('/api/signup', async (req, res) => {
   try {
-    const { name, room, email, password } = req.body;
+    const { name, room, email, password, phone } = req.body;   // (NAYA) phone yahan se uthaya
 
     // Rules validation.js mein hain. Pehli galti ka message wapas jata hai
-    const err = V.checkName(name) || V.checkRoom(room) || V.checkEmail(email) || V.checkPassword(password);
+    const err = V.checkName(name) || V.checkRoom(room) || V.checkPhone(phone) || V.checkEmail(email) || V.checkPassword(password);
     if (err) return res.status(400).json({ error: err });
+
+    const cleanPhone = phone.replace(/[\s-]/g, '');   // (NAYA) sirf digits save hote hain
 
     const hash = await bcrypt.hash(password, 10);
     const result = await pool.query(
-  'INSERT INTO users (name, email, password_hash, role, room,phone_number, last_login) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *',
-  [name.trim(), email.trim().toLowerCase(), hash, 'resident', room.trim(), phone ? phone.trim() : null]
-);
+      'INSERT INTO users (name, email, password_hash, role, room, phone_number, last_login) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *',
+      [name.trim(), email.trim().toLowerCase(), hash, 'resident', room.trim(), cleanPhone]
+    );
     const user = result.rows[0];
 
     // Resident ko welcome, admin ko batao ke naya resident aaya
@@ -89,6 +91,7 @@ app.post('/api/signup', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 // ---------- Login ----------
 app.post('/api/login', async (req, res) => {
   try {
@@ -127,6 +130,43 @@ app.post('/api/login', async (req, res) => {
       .catch(e => console.log('last_login error:', e.message));
 
     res.json({ token: makeToken(user), user: safeUser(user) });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ---------- (NAYA) Forgot password: resident email + signup wala phone number se naya password ----------
+app.post('/api/forgot-password', async (req, res) => {
+  try {
+    const { email, phone, password } = req.body;
+
+    // Teeno ke rules validation.js mein hain
+    const err = V.checkEmail(email) || V.checkPhone(phone) || V.checkPassword(password);
+    if (err) return res.status(400).json({ error: err });
+
+    const cleanPhone = phone.replace(/[\s-]/g, '');
+
+    // Sirf resident, aur email + phone dono match hon. Galat ho to ek hi message (andaza na lage)
+    const r = await pool.query(
+      `SELECT id, password_hash FROM users
+       WHERE email = $1 AND role = 'resident'
+         AND regexp_replace(COALESCE(phone_number, ''), '\\D', '', 'g') = $2`,
+      [email.trim().toLowerCase(), cleanPhone]
+    );
+    const user = r.rows[0];
+    if (!user) return res.status(400).json({ error: 'Email and phone number do not match.' });
+
+    // Naya password purane jaisa na ho
+    if (await bcrypt.compare(password, user.password_hash)) {
+      return res.status(400).json({ error: 'New password must be different from the old one.' });
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+    await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hash, user.id]);
+    await notifyUser(user.id, 'Your password was reset.');
+
+    res.json({ ok: true });
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: 'Server error' });
@@ -376,10 +416,11 @@ app.patch('/api/complaints/:id/status', auth, async (req, res) => {
   }
   res.json({ ok: true });
 });
+
 // ---------- Landing Page Contact Form ----------
 app.post('/api/contact', async (req, res) => {
   try {
-    const { name, room, email, message, phone } = req.body;
+    const { name, room, email, message } = req.body;
 
     // Validation check
     const err = V.checkName(name) || (room ? V.checkRoom(room) : '') || V.checkEmail(email) || V.checkText(message, 'Message', 10, 500);
@@ -409,6 +450,7 @@ app.post('/api/notices', auth, adminOnly, async (req, res) => {
 
   res.json({ ok: true });
 });
+
 // Local par chalane ke liye (node server.js). Vercel par iski zaroorat nahi
 if (require.main === module) {
   const port = process.env.PORT || 3000;

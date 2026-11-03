@@ -19,6 +19,9 @@ function draw() {
       <input id="pw" type="password">
       <button type="button" class="pw-eye" id="pwbtn" title="Show password" onclick="togglePw()">${ic('eyeoff', 18)}</button>
     </div>
+    ${role === 'resident'
+      ? '<div class="lnk" style="text-align:right;margin-top:8px;font-size:13px" onclick="location.href=\'/forgot.html\'">Forgot password?</div>'
+      : ''}
     <div class="err" id="er"></div>
     <button class="btn full" id="lbtn" onclick="doLogin()">${ic('key', 16)} Log in</button>
     ${role === 'resident'
