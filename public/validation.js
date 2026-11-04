@@ -99,6 +99,16 @@ function validatePasswordChange() {
   ]);
 }
 
+// Password box + eye icon (show/hide). Change Password ke teeno boxes yahi use karte hain
+function pwField(id) {
+  return `<div class="pw-wrap"><input id="${id}" type="password"><button type="button" class="pw-eye" title="Show password" onclick="togglePwField('${id}', this)">${ic('eyeoff', 18)}</button></div>`;
+}
+function togglePwField(id, btn) {
+  const input = document.getElementById(id), show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.innerHTML = ic(show ? 'eye' : 'eyeoff', 18);
+}
+
 // Type karte hi us field ka error hat jaye
 if (typeof document !== 'undefined') {
   document.addEventListener('input', e => {

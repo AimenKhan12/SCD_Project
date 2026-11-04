@@ -88,9 +88,9 @@ function content() {
     // ===== Change Password =====
     case 'Change Password':
       return `<h2>Change password</h2><p class="sub">Use a strong password.</p>
-        <div class="pn fm mid"><label>Current password</label><input id="op" type="password">
-          <label>New password (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label><input id="np2" type="password">
-          <label>Confirm new password</label><input id="np3" type="password">
+        <div class="pn fm mid"><label>Current password</label>${pwField('op')}
+          <label>New password (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label>${pwField('np2')}
+          <label>Confirm new password</label>${pwField('np3')}
           <label class="chk-wrap"><input id="cf" type="checkbox"> I confirm this password</label>
           <button class="btn full" onclick="changePassword()">${ic('key', 16)} Save password</button></div>`;
 
@@ -122,7 +122,16 @@ async function act(fn, okMessage) {
 }
 
 // Password change: pehle teeno boxes check hote hain (validatePasswordChange validation.js mein hai)
-const changePassword = () => validatePasswordChange() && act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value, confirm: $('#cf').checked }), 'Password changed');
+const changePassword = async () => {
+  if (!validatePasswordChange()) return;
+  try {
+    await api('/password', 'POST', { old: $('#op').value, next: $('#np2').value, confirm: $('#cf').checked });
+    toast('Password changed'); render();        // sirf success par form saaf hota hai
+  } catch (e) {
+    // Galat current password: error field ke neeche dikhao, fields khali mat karo
+    if (/current password/i.test(e.message)) { showError('op', e.message); $('#op').focus(); } else toast(e.message);
+  }
+};
 
 // ---------- forms ----------
 // ADD NEW FUNCTIONS ABOVE THIS LINE
