@@ -339,8 +339,9 @@ app.post('/api/notifications/read', auth, async (req, res) => {
 // ---------- Change password ----------
 app.post('/api/password', auth, async (req, res) => {
   try {
-    const { old, next } = req.body;
+    const { old, next, confirm } = req.body;
     if (!old || !next) return res.status(400).json({ error: 'Fill both boxes' });
+    if (confirm !== true) return res.status(400).json({ error: 'Please tick the confirm box.' });
 
     // Naya password strong ho (validation.js) aur purane se alag ho
     const err = V.checkPassword(next) || (old === next ? 'New password must be different from the current one.' : '');

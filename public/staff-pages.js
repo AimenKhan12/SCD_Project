@@ -91,6 +91,7 @@ function content() {
         <div class="pn fm mid"><label>Current password</label><input id="op" type="password">
           <label>New password (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label><input id="np2" type="password">
           <label>Confirm new password</label><input id="np3" type="password">
+          <label class="chk-wrap"><input id="cf" type="checkbox"> I confirm this password</label>
           <button class="btn full" onclick="changePassword()">${ic('key', 16)} Save password</button></div>`;
 
     // ADD NEW PAGES ABOVE THIS LINE
@@ -121,7 +122,7 @@ async function act(fn, okMessage) {
 }
 
 // Password change: pehle teeno boxes check hote hain (validatePasswordChange validation.js mein hai)
-const changePassword = () => validatePasswordChange() && act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value }), 'Password changed');
+const changePassword = () => validatePasswordChange() && act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value, confirm: $('#cf').checked }), 'Password changed');
 
 // ---------- forms ----------
 // ADD NEW FUNCTIONS ABOVE THIS LINE

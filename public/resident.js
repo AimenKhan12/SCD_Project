@@ -118,10 +118,11 @@ function page() {
           : '<p class="empty">No notifications yet.</p>'}</div>`;
     case 'Change Password':
       return `<h2>Change password</h2><p class="sub">Use a strong password.</p>
-        <div class="pn fm">
+        <div class="pn fm mid">
           <label>Current password</label><input id="op" type="password">
           <label>New password (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label><input id="np2" type="password">
           <label>Confirm new password</label><input id="np3" type="password">
+          <label class="chk-wrap"><input id="cf" type="checkbox"> I confirm this password</label>
           <button class="btn full" onclick="changePassword()">${ic('key', 16)} Save password</button>
         </div>`;
   }
@@ -185,7 +186,7 @@ const rate = (id, value) => value && act(() => api('/complaints/' + id + '/rate'
 const deleteComplaint = id => confirm('Delete this complaint? This cannot be undone.') && act(() => api('/complaints/' + id, 'DELETE'), 'Complaint deleted');
 
 // Password change: pehle teeno boxes check hote hain (validatePasswordChange validation.js mein hai)
-const changePassword = () => validatePasswordChange() && act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value }), 'Password changed');
+const changePassword = () => validatePasswordChange() && act(() => api('/password', 'POST', { old: $('#op').value, next: $('#np2').value, confirm: $('#cf').checked }), 'Password changed');
 
 // Har 15 second mein naya data (forms wale pages par nahi, taaki typing na mite)
 setInterval(async () => {

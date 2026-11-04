@@ -66,7 +66,7 @@ function checkSame(a, b) {
 // Field ke neeche laal text aata hai. msg khali ho to error hat jata hai
 function showError(id, msg) {
   const input = document.getElementById(id);
-  const holder = input.closest('.pw-wrap') || input;
+  const holder = input.closest('.pw-wrap') || input.closest('.chk-wrap') || input;
   let box = holder.nextElementSibling;
   if (!box || !box.classList.contains('field-err')) {
     box = document.createElement('div');
@@ -94,7 +94,8 @@ function validatePasswordChange() {
   return validate([
     ['op', old ? '' : 'Enter your current password.'],
     ['np2', checkPassword(next) || (old && next === old ? 'New password must be different from the current one.' : '')],
-    ['np3', checkSame(next, again)]
+    ['np3', checkSame(next, again)],
+    ['cf', $('#cf').checked ? '' : 'Please tick the box to confirm.']
   ]);
 }
 
