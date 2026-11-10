@@ -456,6 +456,12 @@ app.post('/api/notices', auth, adminOnly, async (req, res) => {
 if (require.main === module) {
   const port = process.env.PORT || 3000;
   app.listen(port, () => console.log('Server Working: http://localhost:' + port));
+
+  // Background thread: overdue complaints check karta hai (alag file: overdue-worker.js)
+  const { Worker } = require('worker_threads');
+  new Worker(path.join(__dirname, 'overdue-worker.js'))
+    .on('message', (msg) => console.log('[Worker]', msg))
+    .on('error', (e) => console.log('[Worker error]', e.message));
 }
 
 // Vercel ko app yahin se milti hai
