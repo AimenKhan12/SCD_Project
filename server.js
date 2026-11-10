@@ -457,11 +457,13 @@ if (require.main === module) {
   const port = process.env.PORT || 3000;
   app.listen(port, () => console.log('Server Working: http://localhost:' + port));
 
-  // Background thread: overdue complaints check karta hai (alag file: overdue-worker.js)
+  // ---------- MULTITHREADING: background thread start karna ----------
   const { Worker } = require('worker_threads');
-  new Worker(path.join(__dirname, 'overdue-worker.js'))
-    .on('message', (msg) => console.log('[Worker]', msg))
-    .on('error', (e) => console.log('[Worker error]', e.message));
+  console.log('Main thread: server chal raha hai, ab doosra thread bana raha hoon...');
+  const t = new Worker(path.join(__dirname, 'overdue-worker.js'), { workerData: { name: 'Overdue-Thread' } }); // NEW thread
+  t.on('online', () => console.log('Main thread: Overdue-Thread start ho gaya (Running)'));
+  t.on('error',  (e) => console.log('Main thread: Overdue-Thread error:', e.message));
+  t.on('exit',   () => console.log('Main thread: Overdue-Thread khatam (Dead)'));
 }
 
 // Vercel ko app yahin se milti hai
