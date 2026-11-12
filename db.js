@@ -56,6 +56,17 @@ async function init() {
     )
   `);
 
+  // Complaint history: har step (Submitted, Assigned, In Progress, Resolved) time ke saath
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS complaint_history (
+      id SERIAL PRIMARY KEY,
+      complaint_id INTEGER REFERENCES complaints(id) ON DELETE CASCADE,
+      status TEXT NOT NULL,
+      note TEXT,
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS contacts (
       id SERIAL PRIMARY KEY,

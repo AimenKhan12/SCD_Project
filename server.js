@@ -235,6 +235,25 @@ app.delete('/api/staff/:id', auth, adminOnly, async (req, res) => {
   res.json({ ok: true });
 });
 
+// ---------- Complaint history (timeline) ----------
+// Ek line mein history table mein naya step likhta hai
+async function addHistory(complaintId, status, note) {
+  await pool.query('INSERT INTO complaint_history (complaint_id, status, note) VALUES ($1, $2, $3)', [complaintId, status, note || '']);
+}
+
+// Complaint ki timeline (resident: apni, staff: apni assigned, admin: sab)
+app.get('/api/complaints/:id/history', auth, async (req, res) => {
+  const c = await pool.query('SELECT resident_id, assigned_to, created_at FROM complaints WHERE id = $1', [req.params.id]);
+  const row = c.rows[0];
+  if (!row) return res.status(404).json({ error: 'Complaint not found' });
+  const allowed = req.user.role === 'admin' || row.resident_id === req.user.id || row.assigned_to === req.user.id;
+  if (!allowed) return res.status(403).json({ error: 'Not allowed' });
+
+  const h = await pool.query('SELECT status, note, created_at FROM complaint_history WHERE complaint_id = $1 ORDER BY id', [req.params.id]);
+  // Purani complaints (history se pehle ki) ke liye sirf Submitted dikhao
+  res.json(h.rows.length ? h.rows : [{ status: 'Submitted', note: '', created_at: row.created_at }]);
+});
+
 // ---------- Complaints ----------
 app.get('/api/complaints', auth, async (req, res) => {
   let where = '';
@@ -277,6 +296,13 @@ app.post('/api/complaints', auth, async (req, res) => {
       [req.user.id, staffId, category, priority || 'Normal', visit_time || 'Anytime', description.trim()]);
 
     const id = r.rows[0].id;
+
+    // Timeline: Submitted, aur auto-assign hua to kis staff ko
+    await addHistory(id, 'Submitted', 'Complaint submitted by resident');
+    if (staffId) {
+      const sn = await pool.query('SELECT name FROM users WHERE id = $1', [staffId]);
+      await addHistory(id, 'Assigned', 'Auto-assigned to ' + sn.rows[0].name + ' (least busy staff)');
+    }
 
     // Resident, staff aur admin teeno ko notification
     await notifyUser(req.user.id, `Your ${label(category, id)} was submitted.`);
@@ -379,6 +405,7 @@ app.patch('/api/complaints/:id/assign', auth, adminOnly, async (req, res) => {
 
   // Naye staff, purane staff aur resident ko batao
   const st = await pool.query('SELECT name FROM users WHERE id = $1', [staffId]);
+  await addHistory(req.params.id, 'Reassigned', 'Admin assigned to ' + st.rows[0].name);
   await notifyUser(staffId, `${name} was assigned to you.`);
   if (oldStaff && oldStaff !== staffId) await notifyUser(oldStaff, `${name} was taken away from you.`);
   await notifyUser(old.rows[0].resident_id, `Your ${name} is now handled by ${st.rows[0].name}.`);
@@ -402,6 +429,7 @@ app.patch('/api/complaints/:id/status', auth, async (req, res) => {
 
   if (r.rows[0]) {
     const name = label(r.rows[0].category, req.params.id);
+    await addHistory(req.params.id, status, 'Status changed by ' + req.user.role);
 
     // Resident ko hamesha notification
     await notifyUser(r.rows[0].resident_id, `Your ${name} is now ${status}.`);
