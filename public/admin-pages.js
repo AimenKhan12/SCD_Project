@@ -49,9 +49,9 @@ function table(a, canEdit) {
       <td>${esc(c.description)}<br><small>${day(c.created_at)} - Best time: ${esc(c.visit_time)}</small></td>
       <td class="${c.priority}">${c.priority}</td>
       <td>${esc(c.resident_name)}<br><small>${esc(c.room)}</small></td>
-      <td>${staff}</td><td>${status}</td></tr>`;
+      <td>${staff}</td><td>${status}</td><td class="tc"><button class="track-btn" onclick="track(${c.id})">Track</button></td></tr>`;
   }).join('');
-  return `<div class="pn"><table><tr><th>#</th><th>Category</th><th>Problem</th><th>Priority</th><th>Resident</th><th>Staff</th><th>Status</th></tr>${rows}</table></div>`;
+  return `<div class="pn"><table><tr><th>#</th><th>Category</th><th>Problem</th><th>Priority</th><th>Resident</th><th>Staff</th><th>Status</th><th class="tc">Track</th></tr>${rows}</table></div>`;
 }
 
 // ---------- pages ----------

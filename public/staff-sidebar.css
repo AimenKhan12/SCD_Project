@@ -1,8 +1,8 @@
-/* staff-sidebar.css: staff sidebar ke neeche naam wala hissa */
-.side-foot{margin-top:auto;padding:12px;border-top:1px solid rgba(255,255,255,.15);color:#fff}
+/* resident-sidebar.css: resident sidebar ke neeche naam aur room wala hissa */
+.side-foot{margin-top:auto;padding:12px;border-top:1px solid rgba(255,255,255,.15);color:#fff;border-radius:10px;transition:background .2s}
 .side-foot b{display:block}
 .side-foot small{color:var(--stx)}
-
-/*  hover */
-.side-foot{border-radius:10px;transition:background .2s}
 .side-foot:hover{background:rgba(255,255,255,.1)}
+/* Change Password box beech mein (staff/admin jaisa) */
+.fm.mid{margin:0 auto 14px;transition:box-shadow .2s,transform .2s}
+.fm.mid:hover{box-shadow:var(--sh);transform:translateY(-2px)}

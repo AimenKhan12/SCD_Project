@@ -70,3 +70,12 @@
 .icon-del{background:none;border:0;cursor:pointer;padding:6px;border-radius:8px;display:inline-grid;place-items:center;transition:background .2s,transform .15s}
 .icon-del svg{color:var(--bad)}
 .icon-del:hover{background:rgba(192,40,28,.12);transform:scale(1.1)}
+/* ---------- Track button + timeline popup (teeno panels mein same) ---------- */
+th.tc,td.tc{text-align:center;white-space:nowrap}
+.track-btn{background:transparent;color:var(--pri);border:1.5px solid var(--pri);border-radius:999px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,transform .15s,box-shadow .15s}
+.track-btn:hover{background:var(--pri);color:#fff;transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,.18)}
+.track-btn:active{transform:translateY(0) scale(.97)}
+.tl-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:999}
+.tl-box{background:var(--card);padding:22px;border-radius:14px;width:min(420px,90vw);max-height:80vh;overflow:auto}
+.tl{list-style:none;margin:14px 0;padding-left:18px;border-left:3px solid var(--pri)}
+.tl li{margin-bottom:14px}

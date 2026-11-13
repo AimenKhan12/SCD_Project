@@ -46,7 +46,7 @@ function bars(rows) {
 // Complaints table. opts.rate = rating column, opts.del = delete icon column
 function table(a, opts = {}) {
   if (!a.length) return '<div class="pn"><p class="empty">Nothing here yet.</p></div>';
-  const head = `<th>#</th><th>Category</th><th>Problem</th><th>Priority</th><th>Staff</th><th>Status</th>${opts.rate ? '<th>Rating</th>' : ''}${opts.del ? '<th></th>' : ''}`;
+  const head = `<th>#</th><th>Category</th><th>Problem</th><th>Priority</th><th>Staff</th><th>Status</th><th class="tc">Track</th>${opts.rate ? '<th>Rating</th>' : ''}${opts.del ? '<th></th>' : ''}`;
   const rows = a.map(c => {
     const rate = opts.rate
       ? `<td>${c.rating
@@ -64,7 +64,7 @@ function table(a, opts = {}) {
       <td>${esc(c.description)}<br><small>${day(c.created_at)} - Best time: ${esc(c.visit_time)}</small></td>
       <td class="${c.priority}">${c.priority}</td>
       <td>${esc(c.staff_name || 'Unassigned')}</td>
-      <td>${badge(c.status)} <a class="track" onclick="track(${c.id})">Track</a></td>${rate}${del}</tr>`;
+      <td>${badge(c.status)}</td><td class="tc"><button class="track-btn" onclick="track(${c.id})">Track</button></td>${rate}${del}</tr>`;
   }).join('');
   return `<div class="pn"><table><tr>${head}</tr>${rows}</table></div>`;
 }
@@ -181,18 +181,6 @@ const submitComplaint = () => {
 };
 
 const rate = (id, value) => value && act(() => api('/complaints/' + id + '/rate', 'POST', { rating: value }), 'Thanks for rating');
-
-// Complaint ki timeline popup mein dikhana (server se history aati hai)
-async function track(id) {
-  try {
-    const steps = await api('/complaints/' + id + '/history');
-    const items = steps.map(h => `<li><b>${esc(h.status)}</b><br><small>${new Date(h.created_at).toLocaleString()}${h.note ? ' - ' + esc(h.note) : ''}</small></li>`).join('');
-    document.body.insertAdjacentHTML('beforeend',
-      `<div class="tl-bg" onclick="this.remove()"><div class="tl-box" onclick="event.stopPropagation()">
-         <h3>Complaint #${id} timeline</h3><ul class="tl">${items}</ul>
-         <button class="btn" onclick="this.closest('.tl-bg').remove()">Close</button></div></div>`);
-  } catch (e) { toast(e.message); }
-}
 
 // Pending complaint delete karna (pehle poochta hai)
 const deleteComplaint = id => confirm('Delete this complaint? This cannot be undone.') && act(() => api('/complaints/' + id, 'DELETE'), 'Complaint deleted');

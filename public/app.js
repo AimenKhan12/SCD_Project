@@ -57,6 +57,18 @@ function toast(msg) {
   setTimeout(() => d.remove(), 2600);
 }
 
+// Complaint ki timeline popup mein dikhana (teeno panels mein yahi function chalta hai)
+async function track(id) {
+  try {
+    const steps = await api('/complaints/' + id + '/history');
+    const items = steps.map(h => `<li><b>${esc(h.status)}</b><br><small>${new Date(h.created_at).toLocaleString()}${h.note ? ' - ' + esc(h.note) : ''}</small></li>`).join('');
+    document.body.insertAdjacentHTML('beforeend',
+      `<div class="tl-bg" onclick="this.remove()"><div class="tl-box" onclick="event.stopPropagation()">
+         <h3>Complaint #${id} timeline</h3><ul class="tl">${items}</ul>
+         <button class="btn" onclick="this.closest('.tl-bg').remove()">Close</button></div></div>`);
+  } catch (e) { toast(e.message); }
+}
+
 // Server se baat karne ke liye. Example: api('/login', 'POST', { ... })
 async function api(path, method = 'GET', body) {
   const res = await fetch('/api' + path, {
