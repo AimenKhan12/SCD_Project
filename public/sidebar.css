@@ -95,3 +95,7 @@ th.tc,td.tc{text-align:center;white-space:nowrap}
 .ai-box.ai-bad b{color:var(--bad)}
 .ai-stat{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .ai-stat svg{color:var(--pri);flex:none}
+
+/* AI tips tried: complaint ke neeche chhota badge (teeno panels) */
+.ai-tag{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--pri2);color:var(--pri);border:1px solid var(--bd);cursor:help}
+.ai-tag svg{flex:none}

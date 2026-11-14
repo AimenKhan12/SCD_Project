@@ -69,6 +69,15 @@ async function track(id) {
   } catch (e) { toast(e.message); }
 }
 
+// Complaint ke text mein AI wala note ho ("[AI tried: ...]") to use chhota badge bana deta hai.
+// Steps badge par mouse le jane par (tooltip) dikhte hain. Teeno panels yahi use karte hain.
+function problemText(d) {
+  const m = String(d || '').match(/\s*\[(?:Already tried|AI tried)(?::\s*([\s\S]*))?\]\s*$/);
+  if (!m) return esc(d);
+  const tip = m[1] ? ' title="Steps tried: ' + esc(m[1]) + '"' : '';
+  return esc(d.slice(0, m.index)) + '<br><span class="ai-tag"' + tip + '>' + ic('zap', 12) + ' AI tips tried</span>';
+}
+
 // Server se baat karne ke liye. Example: api('/login', 'POST', { ... })
 async function api(path, method = 'GET', body) {
   const res = await fetch('/api' + path, {

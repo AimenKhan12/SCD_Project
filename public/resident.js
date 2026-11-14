@@ -62,7 +62,7 @@ function table(a, opts = {}) {
       : '';
     return `<tr><td>${c.id}</td>
       <td>${ic(CAT_ICON[c.category], 15)} ${esc(c.category)}</td>
-      <td>${esc(c.description)}<br><small>${day(c.created_at)} - Best time: ${esc(c.visit_time)}</small></td>
+      <td>${problemText(c.description)}<br><small>${day(c.created_at)} - Best time: ${esc(c.visit_time)}</small></td>
       <td class="${c.priority}">${c.priority}</td>
       <td>${esc(c.staff_name || 'Unassigned')}</td>
       <td>${badge(c.status)}</td><td class="tc"><button class="track-btn" onclick="track(${c.id})">Track</button></td>${rate}${del}</tr>`;
@@ -206,6 +206,14 @@ async function aiNotFixed() {
   $('#ai-box').innerHTML = '<div class="ai-box"><b>Okay, please submit your complaint.</b><p>The staff will see that you already tried these steps.</p></div>';
 }
 
+// AI steps try kiye the to description ke end mein chhota note jodta hai (500 characters ki limit ke andar)
+function withAiNote(text) {
+  if (!aiTried) return text;
+  const room = 500 - text.length - 12;                                           // "[AI tried: ]" ke liye jagah
+  if (room > 20) return text + ' [AI tried: ' + aiTips.join('; ').slice(0, room) + ']';
+  return text.length <= 489 ? text + ' [AI tried]' : text;
+}
+
 // Complaint submit: pehle description check hoti hai (rules validation.js mein)
 const submitComplaint = () => {
   if (!validate([['nd', checkText($('#nd').value, 'Description', 10, 500)]])) return;
@@ -213,8 +221,7 @@ const submitComplaint = () => {
     await api('/complaints', 'POST', {
       category: $('#nc').value, priority: $('#np').value,
       visit_time: $('#nt').value,
-      // AI steps try kiye the to complaint ke saath chhota note (500 characters ki limit ke andar)
-      description: aiTried ? ($('#nd').value + ' [Already tried: ' + aiTips.join('; ') + ']').slice(0, 500) : $('#nd').value
+      description: withAiNote($('#nd').value)
     });
     aiTips = []; aiTried = false;
     view = 'My Complaints';

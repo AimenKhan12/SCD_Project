@@ -35,7 +35,7 @@ function table(a, canEdit) {
         ${STATUSES.map(s => `<option ${s === c.status ? 'selected' : ''}>${s}</option>`).join('')}</select>`;
     }
     return `<tr><td>${c.id}</td><td>${ic(CAT_ICON[c.category], 15)} ${esc(c.category)}</td>
-      <td>${esc(c.description)}<br><small>${day(c.created_at)} - Best time: ${esc(c.visit_time)}</small></td>
+      <td>${problemText(c.description)}<br><small>${day(c.created_at)} - Best time: ${esc(c.visit_time)}</small></td>
       <td class="${c.priority}">${c.priority}</td>
       <td>${esc(c.resident_name)}<br><small>${esc(c.room)}</small></td>
       <td>${status}</td><td class="tc"><button class="track-btn" onclick="track(${c.id})">Track</button></td></tr>`;
