@@ -14,6 +14,7 @@ async function load() {
   if (['Dashboard', 'All Complaints', 'Reports'].includes(page)) jobs.complaints = api('/complaints');
   if (['All Complaints', 'Manage Staff', 'Reports'].includes(page)) jobs.staff = api('/staff');
   if (page === 'Notice Board') jobs.notices = api('/notices');
+  if (page === 'Dashboard') jobs.ai = api('/ai-stats').catch(() => null);   // AI ne kitni problems solve ki
   const keys = Object.keys(jobs);
   const results = await Promise.all(Object.values(jobs));
   keys.forEach((k, i) => data[k] = results[i]);
@@ -64,6 +65,7 @@ function content() {
       const r = a.length ? Math.round(done / a.length * 100) : 0, p = a.length ? Math.round(prog / a.length * 100) : 0;
       return `<div class="hero"><div><h2>${hello}, ${esc(me.name.split(' ')[0])}</h2><p class="sub">${new Date().toDateString()}</p></div></div>
         ${cards(a)}
+        <div class="pn ai-stat">${ic('zap', 20)} <span><b>${data.ai ? data.ai.solved : 0}</b> problems were solved by AI suggestions, so no complaint was needed. (AI help used ${data.ai ? data.ai.total : 0} times)</span></div>
         <div class="g2">
           <div class="pn"><h3>Resolution rate</h3><div class="dnw">
             <div class="dn" style="background:conic-gradient(var(--ok) 0 ${r}%,#3b6bff ${r}% ${r + p}%,#f5a524 ${r + p}% 100%)"><div>${a.length ? r + '%' : '-'}</div></div>

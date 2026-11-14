@@ -8,6 +8,7 @@ const ICON = { 'Dashboard': 'grid', 'New Complaint': 'plus', 'My Complaints': 'f
 const CAT_ICON = { Electrical: 'zap', Plumbing: 'drop', Cleaning: 'trash', Internet: 'wifi' };
 const FORM_VIEWS = ['New Complaint', 'Change Password'];   // in pages par auto refresh nahi
 
+let aiTips = [], aiTried = false;   // AI ki suggestions, aur resident ne unhe try kiya ya nahi
 let view = 'Dashboard';
 let data = { complaints: [], notices: [], notes: { items: [], unread: 0 } };
 
@@ -100,7 +101,11 @@ function page() {
           <label>Priority</label><select id="np"><option>Normal</option><option>Urgent</option><option>Low</option></select>
           <label>Best time for a visit to your room</label><select id="nt">${options(['Anytime', 'Morning', 'Afternoon', 'Evening', 'After 5 PM'])}</select>
           <label>Describe the problem (at least 10 characters)</label><textarea id="nd" rows="3" maxlength="500"></textarea>
-          <button class="btn full" onclick="submitComplaint()">${ic('check', 16)} Submit complaint</button>
+          <div class="btn-row">
+            <button class="btn o full" onclick="askAI()">${ic('zap', 16)} Quick AI suggestion</button>
+            <button class="btn full" onclick="submitComplaint()">${ic('check', 16)} Submit complaint</button>
+          </div>
+          <div id="ai-box"></div>
         </div>`;
     case 'My Complaints':
       return `<h2>My complaints</h2><p class="sub">All complaints you have submitted. You can delete a complaint while it is Pending.</p>${table(a, { del: true })}`;
@@ -168,14 +173,50 @@ async function act(fn, okMessage) {
 }
 
 // ---------- forms ----------
+// ---------- Quick AI suggestion ----------
+// 1) AI se 3-4 steps maango
+async function askAI() {
+  if (!validate([['nd', checkText($('#nd').value, 'Description', 10, 500)]])) return;   // pehle problem likho
+  const box = $('#ai-box');
+  box.innerHTML = '<p class="ai-wait">AI is thinking...</p>';
+  aiTried = false;
+  try {
+    const r = await api('/ai-suggest', 'POST', { category: $('#nc').value, text: $('#nd').value });
+    aiTips = r.tips;
+    box.innerHTML = r.emergency
+      ? `<div class="ai-box ai-bad"><b>This looks like an emergency!</b><p>Please do not try to fix it yourself. Submit the complaint now and choose Urgent priority.</p></div>`
+      : `<div class="ai-box"><b>Try these quick steps first:</b>
+           <ol>${r.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ol>
+           <div class="btn-row"><button class="btn sm" onclick="aiSolved()">It is fixed</button>
+           <button class="btn o sm" onclick="aiNotFixed()">Still not fixed</button></div></div>`;
+  } catch (e) { box.innerHTML = ''; toast(e.message); }
+}
+
+// 2) Problem solve ho gayi: complaint submit karne ki zaroorat nahi
+async function aiSolved() {
+  try { await api('/ai-result', 'POST', { solved: true }); } catch (e) {}
+  $('#nd').value = ''; $('#ai-box').innerHTML = ''; aiTips = [];
+  toast('Great! No complaint needed.');
+}
+
+// 3) Solve nahi hui: ab complaint submit karo (staff ko pata chalega ki steps try ho chuke hain)
+async function aiNotFixed() {
+  try { await api('/ai-result', 'POST', { solved: false }); } catch (e) {}
+  aiTried = true;
+  $('#ai-box').innerHTML = '<div class="ai-box"><b>Okay, please submit your complaint.</b><p>The staff will see that you already tried these steps.</p></div>';
+}
+
 // Complaint submit: pehle description check hoti hai (rules validation.js mein)
 const submitComplaint = () => {
   if (!validate([['nd', checkText($('#nd').value, 'Description', 10, 500)]])) return;
   act(async () => {
     await api('/complaints', 'POST', {
       category: $('#nc').value, priority: $('#np').value,
-      visit_time: $('#nt').value, description: $('#nd').value
+      visit_time: $('#nt').value,
+      // AI steps try kiye the to complaint ke saath chhota note (500 characters ki limit ke andar)
+      description: aiTried ? ($('#nd').value + ' [Already tried: ' + aiTips.join('; ') + ']').slice(0, 500) : $('#nd').value
     });
+    aiTips = []; aiTried = false;
     view = 'My Complaints';
   }, 'Complaint submitted');
 };

@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const { pool, init } = require('./db');
+const { getSuggestions } = require('./ai');   // Gemini AI suggestions
 const V = require('./public/validation.js');   // form ke rules (browser bhi yahi file use karta hai)
 
 const app = express();
@@ -233,6 +234,38 @@ app.delete('/api/staff/:id', auth, adminOnly, async (req, res) => {
   if (newId && moved.rows.length) await notifyUser(newId, `${moved.rows.length} ${s.rows[0].category} complaint(s) were moved to you.`);
 
   res.json({ ok: true });
+});
+
+// ---------- Quick AI suggestion (Gemini) ----------
+// Resident complaint likhta hai, AI 3-4 aasan steps deta hai
+app.post('/api/ai-suggest', auth, async (req, res) => {
+  if (req.user.role !== 'resident') return res.status(403).json({ error: 'Only residents can use this' });
+  const { category, text } = req.body;
+  const err = V.checkText(text, 'Description', 10, 500);
+  if (err || !CATEGORIES.includes(category)) return res.status(400).json({ error: err || 'Choose a category' });
+  try {
+    res.json(await getSuggestions(category, text));
+  } catch (e) {
+    console.log('AI error:', e.message);
+    res.status(503).json({ error: 'AI is not available right now. You can submit your complaint normally.' });
+  }
+});
+
+// Resident ne bataya: "fixed" (solved: true) ya "still not fixed" (solved: false)
+app.post('/api/ai-result', auth, async (req, res) => {
+  try {
+    await pool.query('INSERT INTO ai_log (user_id, solved) VALUES ($1, $2)', [req.user.id, req.body.solved === true]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: 'Could not save' }); }
+});
+
+// Admin ke dashboard ke liye: AI ne kitni problems solve karwayi
+app.get('/api/ai-stats', auth, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const r = await pool.query('SELECT COUNT(*) FILTER (WHERE solved)::int AS solved, COUNT(*)::int AS total FROM ai_log');
+    res.json(r.rows[0]);
+  } catch (e) { res.status(500).json({ error: 'Could not load' }); }
 });
 
 // ---------- Complaint history (timeline) ----------

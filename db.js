@@ -56,6 +56,16 @@ async function init() {
     )
   `);
 
+  // AI log: resident ne AI suggestion se problem solve ki ya nahi (admin ko count dikhane ke liye)
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS ai_log (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      solved BOOLEAN NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+
   // Complaint history: har step (Submitted, Assigned, In Progress, Resolved) time ke saath
   await pool.query(`
     CREATE TABLE IF NOT EXISTS complaint_history (
