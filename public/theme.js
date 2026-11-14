@@ -1,10 +1,9 @@
 // theme.js  -  Light / Dark theme (har page par chalti hai, choice browser mein yaad rehti hai)
 (function () {
-  // 1) Pehle saved theme lo; na ho to phone/laptop ki setting dekho
+  // 1) Saved theme lo; kuch saved na ho to LIGHT (theme sirf button se badalti hai)
   var saved = null;
   try { saved = localStorage.getItem('theme'); } catch (e) {}
-  var systemDark = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
-  var theme = saved || (systemDark ? 'dark' : 'light');
+  var theme = saved === 'dark' ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', theme);   // CSS isi se theme pehchanti hai
 
   // 2) Icons (chaand aur suraj)

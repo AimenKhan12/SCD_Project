@@ -27,10 +27,10 @@
 
 /* ---------- THEME BUTTON (header mein, Create Account ke saath) ---------- */
 .theme-toggle{
-  width:40px; height:40px; border-radius:50%;
+  width:32px; height:32px; border-radius:50%;
   border:1.5px solid var(--bd); background:var(--card); color:var(--tx);
   display:inline-grid; place-items:center; cursor:pointer; flex:none;
   transition:transform .25s, border-color .2s, color .2s, box-shadow .2s;
 }
 .theme-toggle:hover{border-color:var(--pri); color:var(--pri); transform:rotate(20deg); box-shadow:var(--sh)}
-.theme-toggle svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.theme-toggle svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}

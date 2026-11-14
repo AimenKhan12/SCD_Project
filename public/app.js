@@ -46,7 +46,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const getUser = () => JSON.parse(localStorage.getItem('user') || 'null');
 const saveSession = d => { localStorage.setItem('token', d.token); localStorage.setItem('user', JSON.stringify(d.user)); };
-const logout = () => { localStorage.clear(); location.href = '/login.html'; };
+const logout = () => { localStorage.removeItem('token'); localStorage.removeItem('user'); location.href = '/login.html'; };   // sirf login hataya, theme yaad rehti hai
 
 // Neeche chhota message
 function toast(msg) {
