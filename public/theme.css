@@ -1,0 +1,36 @@
+/* =====================================================================
+   theme.css  -  Light / Dark theme
+   - Rang badalne hain? Neeche LIGHT ya DARK wale block ke variables badlo.
+   - Button ka design (gol, border, hover) sabse neeche hai.
+   - Ye file base.css ke baad load hoti hai, isliye base.css ke rang yahan se badal jate hain.
+   ===================================================================== */
+
+/* ---------- LIGHT THEME ---------- */
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#eef6f5; --card:#fff; --tx:#0d2b33; --mut:#5a7680;
+  --pri:#0b7f8f; --pri2:#d7f3ef; --bd:#d5e5e3; --bad:#c0281c;
+  --sh:0 6px 18px rgba(10,47,58,.10); --side:#0a2f3a;
+  --warn:#8a5300; --warnbg:#ffefc7; --info:#1747b8; --infobg:#dce7ff; --ok:#0f6b3a; --okbg:#d5f5e1;
+}
+
+/* ---------- DARK THEME ---------- */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#08171c; --card:#0f2730; --tx:#e3f2f1; --mut:#8fb0b2;
+  --pri:#3cd5c3; --pri2:#123c3d; --bd:#1e3f46; --bad:#ff8f84;
+  --sh:0 6px 18px rgba(0,0,0,.4); --side:#051b21;
+  --warn:#ffcf70; --warnbg:#4a3710; --info:#a9c1ff; --infobg:#1f3166; --ok:#7fe0a5; --okbg:#14412a;
+}
+/* Dark mein light-teal background par text gehra rakhte hain, taaki saaf padha jaye */
+:root[data-theme="dark"] .track-btn:hover{color:#08262d}
+
+/* ---------- THEME BUTTON (header mein, Create Account ke saath) ---------- */
+.theme-toggle{
+  width:40px; height:40px; border-radius:50%;
+  border:1.5px solid var(--bd); background:var(--card); color:var(--tx);
+  display:inline-grid; place-items:center; cursor:pointer; flex:none;
+  transition:transform .25s, border-color .2s, color .2s, box-shadow .2s;
+}
+.theme-toggle:hover{border-color:var(--pri); color:var(--pri); transform:rotate(20deg); box-shadow:var(--sh)}
+.theme-toggle svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
