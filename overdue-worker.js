@@ -7,8 +7,8 @@ const { Pool } = require('pg');
 // Is thread ka apna database connection (har thread ki memory alag hoti hai)
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false }, max: 1 });
 
-const LIMIT_MINUTES = Number(process.env.OVERDUE_MINUTES) || 1440;   // 1440 minutes = 24 hours
-const CHECK_SECONDS = Number(process.env.CHECK_SECONDS) || 60;       // kitni der baad dobara check kare
+const LIMIT_MINUTES = Number(process.env.OVERDUE_MINUTES) || 2;   // 1440 minutes = 24 hours
+const CHECK_SECONDS = Number(process.env.CHECK_SECONDS) || 30;       // kitni der baad dobara check kare
 const name = workerData.name;                                        // thread ka naam (server.js se mila)
 
 async function checkOverdue() {
