@@ -21,10 +21,27 @@ function checkEmail(value) {
   const v = String(value || '').trim();
   if (!v) return 'Email is required.';
   if (!v.includes('@')) return 'Email must contain @.';
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return 'Enter a valid email, like name@gmail.com.';
+  
+  const parts = v.split('@');
+  if (parts.length !== 2 || !parts[0] || !parts[1]) {
+    return 'Enter a valid email, like name@gmail.com.';
+  }
+
+  const domain = parts[1];
+  // 1. Domain mein capital letter (jaise Gmail.com) mana hai
+  if (/[A-Z]/.test(domain)) {
+    return 'Domain must be in lowercase (e.g., gmail.com, not Gmail.com).';
+  }
+  // 2. Dot (.) hona zaroori hai
+  if (!domain.includes('.')) {
+    return 'Email domain must contain a dot (e.g., gmail.com).';
+  }
+  // 3. Double/triple m (.comm / .commm) ko pakarne ke liye aur valid extension check
+  if (/\.comm+$/i.test(domain) || !/^[a-z0-9.-]+\.(com|org|net|edu|pk|co|io)$/i.test(domain)) {
+    return 'Enter a valid email domain like @gmail.com (not .comm).';
+  }
   return '';
 }
-
 function checkPassword(value) {
   const v = String(value || '');
   if (!v) return 'Password is required.';
@@ -54,6 +71,7 @@ function checkText(value, label, min, max) {
   if (!v) return label + ' is required.';
   if (v.length < min) return label + ' must be at least ' + min + ' characters.';
   if (v.length > max) return label + ' must be at most ' + max + ' characters.';
+ if (!/[A-Za-z]/.test(v)) return label + ' must contain letters (not just numbers or symbols).';
   return '';
 }
 

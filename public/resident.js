@@ -1,10 +1,8 @@
-// Resident portal. Sidebar ka har item ek page hai.
+// Resident portal. Sidebar ke items resident.html mein hain, page ka content yahan banta hai.
 const me = getUser();
 if (!me || !localStorage.getItem('token')) location.href = '/login.html';
 if (me && me.role !== 'resident') location.href = home(me);
 
-const MENU = ['Dashboard', 'New Complaint', 'My Complaints', 'History', 'Notice Board', 'Notifications', 'Change Password'];
-const ICON = { 'Dashboard': 'grid', 'New Complaint': 'plus', 'My Complaints': 'file', 'History': 'clock', 'Notice Board': 'mega', 'Notifications': 'bell', 'Change Password': 'key' };
 const CAT_ICON = { Electrical: 'zap', Plumbing: 'drop', Cleaning: 'trash', Internet: 'wifi' };
 const FORM_VIEWS = ['New Complaint', 'Change Password'];   // in pages par auto refresh nahi
 
@@ -17,6 +15,7 @@ const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
 const day = d => new Date(d).toLocaleDateString();
 const options = list => list.map(x => `<option>${x}</option>`).join('');
 
+// Server se sirf wahi data lo jo current page ko chahiye
 // Server se sirf wahi data lo jo current page ko chahiye
 async function load() {
   const jobs = { notes: api('/notifications') };
@@ -136,32 +135,49 @@ function page() {
 // ---------- poori screen ----------
 const bellHtml = () => `${ic('bell', 21)}${data.notes.unread ? `<i>${data.notes.unread}</i>` : ''}`;
 
-async function render() {
-  try { await load(); } catch (e) { toast(e.message); return; }
-  const initials = me.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-  $('#root').innerHTML = `<div class="app">
-    <aside class="side" id="sd">${LOGO}
-      ${MENU.map(m => `<a class="${m === view ? 'on' : ''}" onclick="go('${m}')"><i>${ic(ICON[m])}</i>${m}</a>`).join('')}
+// ---------- Sidebar aur top bar (HTML resident.html mein hai, yahan sirf icons/naam/click lagte hain) ----------
+document.querySelectorAll('[data-ic]').forEach(el => el.innerHTML = ic(el.dataset.ic, el.dataset.size || 18));
+$('#logo-box').innerHTML = LOGO;
+$('#side-name').textContent = me.name;
+$('#side-room').textContent = me.room || 'Resident';
+$('#top-name').textContent = me.name;
+$('#top-room').textContent = me.room || 'resident';
+$('#av').textContent = me.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
 
-      <!-- Sidebar ke neeche resident ka naam aur room -->
-      <div class="side-foot">
-        <b>${esc(me.name)}</b>
-        <small>${esc(me.room || 'Resident')}</small>
-      </div>
-    </aside>
-    <div class="main">
-      <div class="top">
-        <button class="ham" onclick="$('#sd').classList.toggle('open')">${ic('menu', 22)}</button>
-        <b>Resident portal</b><span class="sp"></span>
-        <span class="bell" id="bell" onclick="go('Notifications')">${bellHtml()}</span>
-        <div class="av">${esc(initials)}</div>
-        <div class="who nm">${esc(me.name)}<small>${esc(me.room || 'resident')}</small></div>
-        <button class="btn sm o" onclick="logout()">${ic('out', 15)} Log out</button>
-      </div>
-      <div class="cont">${page()}</div>
-    </div></div>`;
-  // Notifications page khulte hi sab read ho jayein
-  if (view === 'Notifications' && data.notes.unread) api('/notifications/read', 'POST').catch(() => {});
+// Menu par click: page kholo
+document.querySelectorAll('.side a[data-page]').forEach(a => {
+  a.onclick = () => { go(a.dataset.page); $('#sd').classList.remove('open'); };
+});
+
+// Sidebar mein current page highlight karo
+function setActive(name) {
+  document.querySelectorAll('.side a[data-page]').forEach(a => a.classList.toggle('on', a.dataset.page === name));
+}
+
+async function render(skipFetch = false) {
+  // 1. FORAN screen aur sidebar active button update karo (0ms delay!)
+  $('#content').innerHTML = page();
+  $('#bell').innerHTML = bellHtml();
+  setActive(view);
+
+  if (skipFetch) return;
+
+  try {
+    const currentView = view;
+    await load();
+    // Agar user abhi bhi isi page par hai, tabhi naya data screen par lagao
+    if (view === currentView) {
+      if (!FORM_VIEWS.includes(view)) {
+        $('#content').innerHTML = page();
+      }
+      $('#bell').innerHTML = bellHtml();
+      if (view === 'Notifications' && data.notes.unread) {
+        api('/notifications/read', 'POST').catch(() => {});
+      }
+    }
+  } catch (e) {
+    toast(e.message);
+  }
 }
 
 function go(name) { view = name; render(); }

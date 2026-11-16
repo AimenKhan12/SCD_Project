@@ -18,3 +18,88 @@
 /*a.btn.sm[href="/login.html"]{
   background: red !important;
 } */
+
+
+
+
+/* home page
+header:  
+.site-header{
+  background:red;
+}
+login button:
+.btn.sm[href="/login.html"]{
+  background: red !important;
+}
+  create account button
+  .btn.sm[href="/signup.html"]{
+  background: red !important;
+}
+get started button 
+.home-buttons :nth-child(1)
+{
+  background:red;
+}
+
+contact desk button 
+.home-buttons :nth-child(2)
+{
+  background:red;
+}
+ resident , staff , admin wly 3 boxes
+ .role-card:nth-child(1)
+{
+  background: red; 
+}
+
+why hotel care waly box:
+.feats .feat:nth-child(1) 
+{
+  background:red;
+}
+
+contact us wala pehla box:
+.pn:nth-child(1)
+{
+  background:red;
+}
+
+submit button
+.btn.full
+{
+  background:red;
+}
+
+how it works wly box
+.step-btn:nth-child(2){ background:red !important; }
+
+total pending in progress waly box ..k0 sy k3 tak
+.cards .c.k0
+{
+  background:red;
+}
+  sidebar
+  .side 
+{
+  background:red;
+}
+  header
+  .top
+{
+  background:red;
+}
+
+profile wala green box
+.av
+{
+  background: red;
+}
+
+  logout button
+  .btn.sm.o
+{
+  background:red;
+}
+   */
+
+   
