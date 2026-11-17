@@ -4,8 +4,11 @@ $('#root').innerHTML = `<div class="lg"><div class="box">${LOGO}
   <label>Full name</label><input id="sn" autocomplete="name">
   <label>Room (block and number)</label><input id="sr" placeholder="Block B, Room 12">
   <label>Phone number (e.g. 030012345678)</label><input id="sph" type="tel" placeholder="030012345678">
+  
   <label>Email</label><input id="se" type="email" autocomplete="username">
+  
   <label>Password (${MIN_PASSWORD}+ characters, 1 number, 1 special character)</label>
+  
   <div class="pw-wrap">
     <input id="sp" type="password" autocomplete="new-password">
     <button type="button" class="pw-eye" id="spbtn" title="Show password" onclick="togglePw()">${ic('eyeoff', 18)}</button>
