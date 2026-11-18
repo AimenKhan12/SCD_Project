@@ -59,7 +59,7 @@ function table(a, opts = {}) {
           ? `<button class="icon-del" title="Delete complaint" onclick="deleteComplaint(${c.id})">${ic('trash', 16)}</button>`
           : ''}</td>`
       : '';
-    return `<tr><td>${c.id}</td>
+    return `<tr data-s="${rowKey(c)}"><td>${c.id}</td>
       <td>${ic(CAT_ICON[c.category], 15)} ${esc(c.category)}</td>
       <td>${problemText(c.description)}<br><small>${day(c.created_at)} - Best time: ${esc(c.visit_time)}</small></td>
       <td class="${c.priority}">${c.priority}</td>
@@ -107,7 +107,7 @@ function page() {
           <div id="ai-box"></div>
         </div>`;
     case 'My Complaints':
-      return `<h2>My complaints</h2><p class="sub">All complaints you have submitted. You can delete a complaint while it is Pending.</p>${table(a, { del: true })}`;
+      return `<h2>My complaints</h2><p class="sub">All complaints you have submitted. You can delete a complaint while it is Pending.</p>${searchBar()}${table(a, { del: true })}`;
     case 'History':
       return `<h2>History</h2><p class="sub">Rate the work after a complaint is resolved.</p>${table(a.filter(c => c.status === 'Resolved'), { rate: true })}`;
     case 'Notice Board':
@@ -180,7 +180,7 @@ async function render(skipFetch = false) {
   }
 }
 
-function go(name) { view = name; render(); }
+function go(name) { if (name !== view) SEARCH = ''; view = name; render(); }
 
 // Action chalao, message dikhao, page dobara draw karo
 async function act(fn, okMessage) {

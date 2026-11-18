@@ -3,6 +3,8 @@
 // Agar pehle se login hai to apne panel par bhej do (role ke hisaab se)
 if (localStorage.getItem('token')) location.href = home(getUser());
 
+fetch('/api/ping').catch(() => {});   // page khulte hi database jaag jaye, taaki login foran ho
+
 let role = 'resident';
 const ROLE_ICON = { resident: 'home', staff: 'tool', admin: 'shield' };
 

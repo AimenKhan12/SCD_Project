@@ -36,6 +36,8 @@ const ICONS = {
   pin: '<path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>'
 };
 
+ICONS.search = '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>';
+
 const ic = (name, size = 18) =>
   `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ''}</svg>`;
 
@@ -90,3 +92,34 @@ async function api(path, method = 'GET', body) {
   if (!res.ok) throw new Error(data.error || 'Something went wrong');
   return data;
 }
+
+// ===== SEARCH BAR (My Complaints / All Complaints) =====
+// Resident, staff aur admin teeno isi code ko use karte hain.
+let SEARCH = '';   // jo user ne likha (auto refresh par bhi bacha rehta hai)
+
+// Complaint ki searchable text: id, category, problem, status, priority, naam, room
+const rowKey = c => esc([c.id, c.category, c.description, c.status, c.priority, c.resident_name, c.staff_name, c.room].filter(Boolean).join(' ')).toLowerCase();
+
+// Search box ka HTML (table se pehle lagta hai)
+function searchBar() {
+  return `<div class="sbar">${ic('search', 17)}
+    <input id="sq" type="search" placeholder="Search complaints (e.g. cl, el, pending)..." autocomplete="off" value="${esc(SEARCH)}" oninput="SEARCH = this.value; applySearch()">
+  </div><p class="empty nores" style="display:none">No complaints found.</p>`;
+}
+
+// Rows chhupao/dikhao. Upper/lower case dono chalte hain, aur word ke shuru se match hota hai
+function applySearch() {
+  if (!$('#sq')) return;
+  const q = SEARCH.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll('#content tr[data-s]').forEach(r => {
+    const ok = !q || (' ' + r.dataset.s).includes(' ' + q);
+    r.style.display = ok ? '' : 'none';
+    if (ok) shown++;
+  });
+  const n = $('.nores');
+  if (n) n.style.display = shown || !document.querySelector('#content tr[data-s]') ? 'none' : '';
+}
+
+// Page ka content badalte hi (auto refresh bhi) search dobara lagao
+new MutationObserver(applySearch).observe($('#content') || document.body, { childList: true });

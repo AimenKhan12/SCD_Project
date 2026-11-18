@@ -1,12 +1,20 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
-  max: 5
+  max: 5,
+  idleTimeoutMillis: 30000,       // 30 seconds
+  connectionTimeoutMillis: 30000, // 30 seconds (taake Neon cold start par timeout na ho!)
+  keepAlive: true
 });
 
+// Agar Neon idle connection reset kare toh server error na de
+pool.on('error', (err) => {
+  console.log('DB idle connection reset (auto-recovering):', err.message);
+});
 async function init() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (

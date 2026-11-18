@@ -46,7 +46,7 @@ function table(a, canEdit) {
       status = `<select onchange="act(() => api('/complaints/${c.id}/status', 'PATCH', { status: this.value }), 'Status updated')">
         ${STATUSES.map(s => `<option ${s === c.status ? 'selected' : ''}>${s}</option>`).join('')}</select>`;
     }
-    return `<tr><td>${c.id}</td><td>${ic(CAT_ICON[c.category], 15)} ${esc(c.category)}</td>
+    return `<tr data-s="${rowKey(c)}"><td>${c.id}</td><td>${ic(CAT_ICON[c.category], 15)} ${esc(c.category)}</td>
       <td>${problemText(c.description)}<br><small>${day(c.created_at)} - Best time: ${esc(c.visit_time)}</small></td>
       <td class="${c.priority}">${c.priority}</td>
       <td>${esc(c.resident_name)}<br><small>${esc(c.room)}</small></td>
@@ -79,7 +79,7 @@ function content() {
       const list = filter === 'All' ? a : a.filter(c => c.status === filter);
       return `<h2>All complaints</h2><p class="sub">Change the staff or the status from the table.</p>
         <div class="fl"><span>Show</span><select onchange="filter = this.value; render()">${['All', ...STATUSES].map(s => `<option ${s === filter ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
-        ${table(list, true)}`;
+        ${searchBar()}${table(list, true)}`;
     }
     case 'Manage Staff':
       return `<h2>Manage staff</h2><p class="sub">Add one staff member for each category. Staff log in with this email and password.</p>
@@ -138,7 +138,7 @@ async function render() {
   if (page === 'Notifications' && data.notes.unread) api('/notifications/read', 'POST').catch(() => {});
 }
 
-function showPage(name) { page = name; setActive(name); render(); }
+function showPage(name) { if (name !== page) SEARCH = ''; page = name; setActive(name); render(); }
 
 // Action chalao, message dikhao, page dobara draw karo
 async function act(fn, okMessage) {

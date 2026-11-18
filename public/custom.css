@@ -100,20 +100,13 @@ profile wala green box
 {
   background:red;
 }
-
-
-create account wala box 
- .lg > div {
-  background: red !important;
-}
-sigunup.js ma field add
-<label>Father name</label><input id="sf" placeholder="Enter father name">
-
- ['sf', $('#sf').value ? '' : 'Father name is required.']
-
-
- <label>Room number</label><input id="lr" placeholder="e.g. Block B, Room 12">
- ['lr', checkRoom($('#lr').value)],
    */
 
- 
+   
+
+/* ===== Search bar (My Complaints / All Complaints) ===== */
+.sbar{position:relative;max-width:360px;margin:0 0 14px}
+.sbar svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mut);pointer-events:none;transition:color .2s}
+.sbar input{padding:10px 14px 10px 38px;border-radius:999px;font-size:14px}
+.sbar:focus-within svg{color:var(--pri)}
+.sbar input::placeholder{color:var(--mut)}

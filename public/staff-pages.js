@@ -34,7 +34,7 @@ function table(a, canEdit) {
       status = `<select onchange="act(() => api('/complaints/${c.id}/status', 'PATCH', { status: this.value }), 'Status updated')">
         ${STATUSES.map(s => `<option ${s === c.status ? 'selected' : ''}>${s}</option>`).join('')}</select>`;
     }
-    return `<tr><td>${c.id}</td><td>${ic(CAT_ICON[c.category], 15)} ${esc(c.category)}</td>
+    return `<tr data-s="${rowKey(c)}"><td>${c.id}</td><td>${ic(CAT_ICON[c.category], 15)} ${esc(c.category)}</td>
       <td>${problemText(c.description)}<br><small>${day(c.created_at)} - Best time: ${esc(c.visit_time)}</small></td>
       <td class="${c.priority}">${c.priority}</td>
       <td>${esc(c.resident_name)}<br><small>${esc(c.room)}</small></td>
@@ -64,7 +64,7 @@ function content() {
     // ===== My Complaints (jo abhi baaki hain, status yahin se badlo) =====
     case 'My Complaints':
       return `<h2>My complaints</h2><p class="sub">Complaints assigned to you. Change the status from the table.</p>
-        ${table(a.filter(c => c.status !== 'Resolved'), true)}`;
+        ${searchBar()}${table(a.filter(c => c.status !== 'Resolved'), true)}`;
 
     // ===== Completed Work (resolved complaints) =====
     case 'Completed Work':
@@ -113,7 +113,7 @@ async function render() {
   if (page === 'Notifications' && data.notes.unread) api('/notifications/read', 'POST').catch(() => {});
 }
 
-function showPage(name) { page = name; setActive(name); render(); }
+function showPage(name) { if (name !== page) SEARCH = ''; page = name; setActive(name); render(); }
 
 // Action chalao, message dikhao, page dobara draw karo
 async function act(fn, okMessage) {

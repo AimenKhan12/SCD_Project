@@ -93,6 +93,12 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
+// ---------- Ping: login page khulte hi database ko jaga deta hai (Neon so jata hai) ----------
+app.get('/api/ping', (req, res) => {
+  pool.query('SELECT 1').catch(() => {});
+  res.json({ ok: true });
+});
+
 // ---------- Login ----------
 app.post('/api/login', async (req, res) => {
   try {
@@ -104,19 +110,16 @@ app.post('/api/login', async (req, res) => {
 
     const cleanEmail = email.trim().toLowerCase();
 
-    // 1. Pehle sirf email se check karo ke account exist karta hai ya nahi
-    const emailCheck = await pool.query('SELECT * FROM users WHERE email = $1', [cleanEmail]);
-    const userByemail = emailCheck.rows[0];
+    // 1. Sirf EK query (pehle 2 thi, har query database tak ka safar hai)
+    const found = await pool.query('SELECT * FROM users WHERE email = $1', [cleanEmail]);
+    const user = found.rows[0];
 
-    if (!userByemail) {
+    if (!user) {
       return res.status(401).json({ error: 'No account found with this email.' });
     }
 
-    // 2. Agar email mil gayi, par user ne role galat select kiya hai
-    const userWithRole = await pool.query('SELECT * FROM users WHERE email = $1 AND role = $2', [cleanEmail, role]);
-    const user = userWithRole.rows[0];
-
-    if (!user) {
+    // 2. Email mil gayi, par role galat select kiya
+    if (user.role !== role) {
       return res.status(401).json({ error: 'Wrong role selected for this account.' });
     }
 
